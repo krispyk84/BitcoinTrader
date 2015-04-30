@@ -8,8 +8,14 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
@@ -34,6 +40,8 @@ import ec.app.bitcoinTrader.FinancialFunctions;
 public class BasicSwing extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	JPanel p = new JPanel();
+	
+	public static String mainParamsFile = "bitcoinTrader.params";
 	
 	public static JTextArea marketsHeaderBitstamp = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderOKCoin = new JTextArea("Loading Market Data...");
@@ -106,14 +114,51 @@ public class BasicSwing extends JFrame implements ActionListener {
 			threads.get(i).start();
 		}
 		
+		mainParamsFile = "bitcoinTrader.params"; //Dayan
 		
 		BasicSwing parent = new BasicSwing();
+		ReadParamsFile("bitcoinTrader.params");  //Dayan
 		Thread.sleep(20000);
 		RestartGPPopUp(args, parent);
 		
 		//ec.Evolve gpProg = new ec.Evolve();
 		//gpProg.main(args);
 		
+	}
+	
+	public static void ReadParamsFile(String file) throws IOException   //Dayan
+	{
+		FileInputStream fstream = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+		String strLine;
+
+		while ((strLine = br.readLine()) != null)   {
+		  paramatersText.append(strLine+"\n");
+		}
+		br.close();
+	}
+	
+	public static void UpdateParamsFile(String file) throws IOException  //Dayan
+	{
+		try {
+			String[] lines = paramatersText.getText().split("\\n"); 
+			File params = new File(file);
+ 
+			if (!params.exists()) {
+				params.createNewFile();
+			}
+ 
+			FileWriter fw = new FileWriter(params.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			
+			for(String line : lines) {
+				bw.write(line + "\n");
+			}
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	public BasicSwing() throws Exception
@@ -254,13 +299,22 @@ public class BasicSwing extends JFrame implements ActionListener {
 		
 		JScrollPane scroll = new JScrollPane(paramatersText);
 	    scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-	    scroll.setLocation(50,340);
-	    scroll.setBounds(50,340, 340,250);
+	    scroll.setBounds(50,340, 360,330);
 		p.add(scroll);  
 	    
 		update.addActionListener(this);
 		update.setActionCommand("Update");
-		update.setBounds(290,600, 100, 40);
+		update.setBounds(310,680, 100, 40);
+		update.addActionListener(new ActionListener() {
+		     public void actionPerformed(ActionEvent ae) {
+		        try {
+					UpdateParamsFile(mainParamsFile);          //Dayan
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		     }
+		   }
+		 );
 	    p.add(update);
 	    
 		JLabel lastUpdateTitle = new JLabel("Last update from current market");
