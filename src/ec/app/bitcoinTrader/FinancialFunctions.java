@@ -30,10 +30,25 @@ public class FinancialFunctions {
 		}
 		return roc;
 	}
+	
+	public static double rateOfChangeOverX(int seconds, int current, String[] homeMarket) {
+		double roc = 0.0;
+
+		if ((current - seconds) >= 0) {
+			double endPrice = Double.parseDouble(homeMarket[current]);
+			double startPrice = Double.parseDouble(homeMarket[current-seconds]);
+			roc = (endPrice / startPrice) * 100;
+		}
+		return roc;
+	}
 
 	// Returns the relative strength index from the relative strength
 	// calculation
 	public static double relativeStrengthIndexOverN(int seconds, int current) {
+		return (100 - (100 / (1 + relativeStrength(seconds, current))));
+	}
+	
+	public static double relativeStrengthIndexOverN(int seconds, int current, String[] homeMarket) {
 		return (100 - (100 / (1 + relativeStrength(seconds, current))));
 	}
 
@@ -48,6 +63,29 @@ public class FinancialFunctions {
 			for (int i = 0; i < seconds; i++) {
 				double currentSecond = Double.parseDouble(MultiValuedRegression.bitStampRecords[current + i]);
 				double previousSecond = Double.parseDouble(MultiValuedRegression.bitStampRecords[current + i - 1]);
+				double returnValue = currentSecond - previousSecond;
+				if (returnValue > 0) {
+					positiveSumReturn += returnValue;
+				} else if (returnValue < 0) {
+					negativeSumReturn += returnValue;
+				} else {
+					// Do nothing
+				}
+			}
+			relativeStrength = (positiveSumReturn / (-1 * negativeSumReturn));
+		}
+
+		return relativeStrength;
+	}
+	
+	public static double relativeStrength(int seconds, int current, String[] homeMarket) {
+		double relativeStrength = 0.0;
+		double positiveSumReturn = 0;
+		double negativeSumReturn = 0;
+		if ((current + seconds) <= MultiValuedRegression.totalSize && (current - 1) >= 0) {
+			for (int i = 0; i < seconds; i++) {
+				double currentSecond = Double.parseDouble(homeMarket[current + i]);
+				double previousSecond = Double.parseDouble(homeMarket[current + i - 1]);
 				double returnValue = currentSecond - previousSecond;
 				if (returnValue > 0) {
 					positiveSumReturn += returnValue;
@@ -92,6 +130,18 @@ public class FinancialFunctions {
 		}
 		return max;
 	}
+	
+	public static double maxValueOverX(int seconds, int current, String[] homeMarket) {
+		double max = 0.0;
+		if ((current - seconds) >= 0) {
+			for (int i = current; i >= (current - seconds); i--) {
+				if (Double.parseDouble(homeMarket[i]) > max) {
+					max = Double.parseDouble(homeMarket[i]);
+				}
+			}
+		}
+		return max;
+	}
 
 	// Minimum Value over X seconds
 	public static double minValueOverX(int seconds, int current, String[] homeMarket) {
@@ -113,6 +163,16 @@ public class FinancialFunctions {
 	public static double averageMarketVariance(String[] homeMarket,	String[] otherMarket) {
 		int numberOfRecords = homeMarket.length;
 
+		double differenceSum = 0;
+
+		for (int i = 0; i < numberOfRecords; i++) {
+			differenceSum += Math.abs(Double.parseDouble(homeMarket[i]) - Double.parseDouble(otherMarket[i]));
+		}
+
+		return differenceSum / numberOfRecords;
+	}
+	
+	public static double averageMarketVariance(String[] homeMarket,	String[] otherMarket, int numberOfRecords) {
 		double differenceSum = 0;
 
 		for (int i = 0; i < numberOfRecords; i++) {

@@ -120,7 +120,7 @@ eval.problem.data = ec.app.bitcoinTrader.DoubleData
 eval.problem.size = 76930
 eval.problem.trainingSetSize = 2272
 
-generations = 500
+generations = 10
 
 select.tournament.size = 3
 
