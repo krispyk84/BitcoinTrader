@@ -41,8 +41,17 @@ import ec.app.bitcoinTrader.FinancialFunctions;
 public class BasicSwing extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	JPanel p = new JPanel();
+	public final static Object monitor = new Object();
 	
 	public static String mainParamsFile = "bitcoinTrader.params";
+	public static boolean thread1 = false;
+	public static boolean thread2 = false;
+	public static boolean thread3 = false;
+	public static boolean thread4 = false;
+	public static boolean allThreads = false;
+	
+	public static boolean STOP = false;
+	public static boolean PAUSE = false;
 	
 	public static JTextArea marketsHeaderBitstamp = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderOKCoin = new JTextArea("Loading Market Data...");
@@ -111,6 +120,7 @@ public class BasicSwing extends JFrame implements ActionListener {
 	//BuyHold Variables
 	public static double buyHoldBTCBalance;
 	
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception
 	{		
 		System.out.println("Spawning Threads");
@@ -130,9 +140,21 @@ public class BasicSwing extends JFrame implements ActionListener {
 		BasicSwing parent = new BasicSwing();
 		ReadParamsFile("bitcoinTrader.params");  //Dayan
 		
+		while(!STOP){
+			System.out.println(thread1 +" "+thread2 +" "+thread3 +" "+thread4 +" ");
+
+			if(!PAUSE){
+				if (thread1 && thread2 && thread3 && thread4){
+					synchronized(monitor) {
+						monitor.notifyAll();
+					}
+				}
+			}
+		}
 		
-		Thread.sleep(20000);
-		System.out.println(currentBistampPrice);
+		
+		//Thread.sleep(20000);
+		//System.out.println(currentBistampPrice);
 		
 		
 		

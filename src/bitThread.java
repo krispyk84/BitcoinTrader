@@ -85,6 +85,42 @@ public class bitThread implements Runnable{
 				Thread.sleep(updateRate * 1000);
 				String apiDataFull = HelperMethods.readUrl(URL);
 				
+				synchronized(BasicSwing.monitor) {
+				    while (!BasicSwing.allThreads) {
+				        if (this.marketName == "okcoin"){
+				        	BasicSwing.thread4 = true;
+				        	System.out.println(this.marketName  + " READY");
+				        }
+				        if (this.marketName == "bitstamp"){
+				        	BasicSwing.thread1 = true;
+				        	System.out.println(this.marketName  + " READY");
+				        }
+				        if (this.marketName == "bitfinex"){
+				        	BasicSwing.thread2 = true;
+				        	System.out.println(this.marketName  + " READY");
+				        }
+				        if (this.marketName == "btce"){
+				        	BasicSwing.thread3 = true;
+				        	System.out.println(this.marketName + " READY");
+				        }
+				        BasicSwing.monitor.wait();
+				        break;
+				    }
+				}
+				BasicSwing.allThreads = false;
+			    if (this.marketName == "okcoin"){
+		        	BasicSwing.thread4 = false;
+		        }
+		        if (this.marketName == "bitstamp"){
+		        	BasicSwing.thread1 = false;
+		        }
+		        if (this.marketName == "bitfinex"){
+		        	BasicSwing.thread2 = false;
+		        }
+		        if (this.marketName == "btce"){
+		        	BasicSwing.thread3 = false;
+		        }
+								
 				String[] apiData = apiDataFull.split(",");
 				for(int i = 0; i< apiData.length; i++)
 				{
@@ -98,7 +134,6 @@ public class bitThread implements Runnable{
 				writeToFile(currentPrice+"", bw);
 				updateCurrentPrice(marketName, currentPrice);
 				
-
 				lineCounter++;
 				marketHeader.setText("");
 				marketHeader.append("Last:" 	+ apiData[h[1]] + "\n");
@@ -193,12 +228,12 @@ public class bitThread implements Runnable{
 						
 					}
 				}
+				System.out.println("END OF THREAD");
 			}	
 			
 			bw.close();
 		
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
