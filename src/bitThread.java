@@ -177,7 +177,7 @@ public class bitThread implements Runnable{
 						
 						double tradeAction = fakeTradeRules[fakeTradeRuleIndex];						
 						//double tradeAction = HelperMethods.calcFromGPProgram(currentPrice);
-						System.out.println(currentPrice+"");
+						System.out.println("Current Price:" + currentPrice+"");
 						System.out.println("TradeAction: "+ tradeAction);
 						
 						HelperMethods.makeGPTrade(tradeAction, lastTradeAction, currentPrice);

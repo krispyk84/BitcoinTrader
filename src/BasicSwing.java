@@ -43,9 +43,12 @@ public class BasicSwing extends JFrame implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
-	JPanel p = new JPanel();
+	public static JPanel p = new JPanel();
 	
 	public final static Object monitor = new Object();
+	
+	public static BasicSwing parent;
+	public static String[] ARGS;
 	
 	//Thread booleans for syncrhonization
 	public static boolean thread1 = false;
@@ -62,7 +65,6 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static JTextArea marketsHeaderOKCoin = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderBitfinex = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderBtcE = new JTextArea("Loading Market Data...");
-	
 	
 	//PARAM TEXT BOX
 	//public static JTextArea paramatersText = new JTextArea(5,20);
@@ -163,27 +165,35 @@ public class BasicSwing extends JFrame implements ActionListener {
 			threads.get(i).start();
 		}
 		
+		parent = new BasicSwing();
+		ARGS = args;
+		startMainLoop(ARGS);
 		
-		
-		BasicSwing parent = new BasicSwing();
-		long startTime = System.currentTimeMillis();
-		while(!STOP){
-				if (thread1 && thread2 && thread3 && thread4){
-					synchronized(monitor) {
-						monitor.notifyAll();
-					}
-					
-					long currentTime = System.currentTimeMillis();
-					double threeMonths = 7884000000.0;
-					if((currentTime-startTime) % 20000 == 0){ //threeMonths){
-						RestartGPPopUp(args, parent);
-					}
-				}
-		}
 		
 		//ec.Evolve gpProg = new ec.Evolve();
 		//gpProg.main(args);
 		
+	}
+	
+	public static void startMainLoop(String[] args) throws Exception 
+	{
+		System.out.println("STARTING MAIN LOOP");
+		long startTime = System.currentTimeMillis();
+		while(!STOP){
+			System.out.print("");
+			if (thread1 && thread2 && thread3 && thread4){
+				synchronized(monitor) {
+					monitor.notifyAll();
+				}
+				
+				long currentTime = System.currentTimeMillis();
+				double threeMonths = 7884000000.0;
+				if((currentTime-startTime) % 20000 == 0){ //threeMonths){
+					RestartGPPopUp(args, parent);
+				}
+			}
+		}
+		System.out.println("STOPPING MAIN LOOP");
 	}
 	
 	public BasicSwing() throws Exception
@@ -193,6 +203,8 @@ public class BasicSwing extends JFrame implements ActionListener {
 		setResizable(false);
 		p.setLayout(null);
 		
+		this.setTitle("BitCoin Trader v1.0");
+		
 		BuildInterface.buildUserInterface(marketsHeaderBitstamp, marketsHeaderOKCoin, marketsHeaderBitfinex, marketsHeaderBtcE, start, pause, stop, update, lastPrice, lastBTC, lastTime, usdBalance, usdBtcEquivalent, btcBalance, btcUsdEquivalent, currentMarketTrading, p, usdBalance2, usdBtcEquivalent2, btcBalance2, btcUsdEquivalent2, lastPrice2, status, tradeAction, btcBalance3, btcUsdEquivalent3);
 		start.addActionListener(this);
 		start.setBounds(50,230,100,40);
@@ -201,7 +213,15 @@ public class BasicSwing extends JFrame implements ActionListener {
 		start.setOpaque(true);
 		start.addActionListener(new ActionListener() {
 		     public void actionPerformed(ActionEvent ae) {
-		        start.setEnabled(false);
+		    	if (STOP == true) {
+		    		STOP = false;
+		    		try {
+						startMainLoop(ARGS);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		    	}
+		    	start.setEnabled(false);
 		        pause.setEnabled(true);
 				pause.setBackground(Color.YELLOW);
 		        pause.setText("PAUSE");
@@ -246,6 +266,8 @@ public class BasicSwing extends JFrame implements ActionListener {
 		        pause.setEnabled(false);
 		        pause.setText("PAUSE");
 		        stop.setEnabled(false);
+		        STOP = true;
+		        HelperMethods.defaultBalances();
 		     }
 		   }
 		 );

@@ -131,5 +131,5 @@ eval.problem.trainingSetSize = 22360
 generations = 20
 select.tournament.size = 3
 breed.elite.0 = 3
-pop.subpop.0.species.crossover-prob = 0.9
-pop.subpop.0.species.mutation-prob = 0.05
+pop.subpop.0.species.pipe.source.0.prob = 0.9
+pop.subpop.0.species.pipe.source.2.prob = 0.05

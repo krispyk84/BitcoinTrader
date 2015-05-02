@@ -11,6 +11,9 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.swing.JTextField;
+
+import bitcoinUI.BuildInterface;
 import ec.MathSolution;
 import ec.app.bitcoinTrader.FinancialFunctions;
 import ec.app.bitcoinTrader.MultiValuedRegression;
@@ -68,6 +71,43 @@ public class HelperMethods {
 	        if (reader != null)
 	            reader.close();
 	    }
+	}
+	
+	public static void defaultBalances() {
+		
+		BasicSwing.currentMarketTrading = 0;
+		
+		BasicSwing.currentMarketPrice = 0;
+		BasicSwing.lastPrice.setText("");
+		
+		BasicSwing.currentUSDBalance = 1000.00;
+		BasicSwing.usdBalance.setText("$1000.00 USD");
+		
+		BasicSwing.currentBTCBalance = 0.00000000;
+		BasicSwing.btcBalance.setText("0.00000000 BTC");
+		
+		BasicSwing.oldUSDBalance = 0.0;
+		BasicSwing.oldBTCBalance = 0.0;
+		
+		//The Balances for the Iterative Algorithm
+		BasicSwing.currentUSDBalance2 = 1000.00;
+		BasicSwing.usdBalance2.setText("$1000.00 USD");
+		
+		BasicSwing.currentBTCBalance2 = 0.00000000;
+		BasicSwing.btcBalance2.setText("0.00000000 BTC");
+		
+		BasicSwing.oldUSDBalance2 = 0.0;
+		BasicSwing.oldBTCBalance2 = 0.0;
+		
+		BasicSwing.btcBalance3.setText("0.00000000 BTC");
+		BasicSwing.buyHoldBTCBalance = 0;
+		BasicSwing.buyHoldCalculated = false;
+		
+		BasicSwing.lastBTC.setText("On Hold");
+		BasicSwing.lastTime.setText("HOLD");
+		
+		BasicSwing.status.setText("On Hold");
+		BasicSwing.tradeAction.setText("HOLD");
 	}
 	
 	

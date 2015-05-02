@@ -15,8 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -26,8 +28,6 @@ import javax.swing.ScrollPaneConstants;
 
 public class BuildInterface {
 	
-	
-
 	public static void buildUserInterface(JTextArea marketsHeaderBitstamp, JTextArea marketsHeaderOKCoin, 
 			JTextArea marketsHeaderBitfinex, JTextArea marketsHeaderBtcE, 
 			JButton start, JButton pause, JButton stop, JButton update,
@@ -44,8 +44,20 @@ public class BuildInterface {
 		    paramVals[i] = line;
 		    i++;
 		}
-		
 		Font myFontTitle = new Font("Helvetica", Font.BOLD, 18);
+		Font fontItalic = new Font("Helvetica", Font.ITALIC, 16);
+		
+		JLabel logo = new JLabel(new ImageIcon("bct_logo.png"));
+		logo.setSize(280,63);
+		logo.setLocation(700,700);
+		p.add(logo);
+		
+		JLabel developed = new JLabel("Developed By: Karim Hamasni & Dayan Balevski");
+		developed.setLocation(20,730);
+		developed.setSize(400,20);
+		developed.setFont(fontItalic);
+		p.add(developed);
+		
 		
 		JLabel marketSectionTitle = new JLabel("Market Snapshot");
 		p.add(marketSectionTitle);
@@ -87,6 +99,9 @@ public class BuildInterface {
 	    p.add(usdBalance);
 		usdBalance.setLocation(500,245);
 		usdBalance.setSize(180,30);
+		usdBalance.setEnabled(false);
+		usdBalance.setDisabledTextColor(Color.BLACK);
+		usdBalance.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		Font myFontBalance = new Font("Helvetica", Font.BOLD, 22);
 		usdBalance.setFont(myFontBalance);
 		usdBalance.setHorizontalAlignment(JTextField.CENTER);
@@ -99,6 +114,9 @@ public class BuildInterface {
 		p.add(btcBalance);
 		btcBalance.setLocation(700,245);
 		btcBalance.setSize(180,30);
+		btcBalance.setEnabled(false);
+		btcBalance.setDisabledTextColor(Color.BLACK);
+		btcBalance.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		btcBalance.setFont(myFontBalance);
 		btcBalance.setHorizontalAlignment(JTextField.CENTER);
 		
@@ -217,6 +235,7 @@ public class BuildInterface {
 		     public void actionPerformed(ActionEvent ae) {
 		        try {
 					UpdateParamsFile(txtPopSize, txtTrainSize, txtGenerations, txtTournSize, txtNumElite, txtCrossProb, txtMuteProb);          //Dayan
+					JOptionPane.showMessageDialog(p, "Parameters have been successfuly updated!");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -238,18 +257,27 @@ public class BuildInterface {
 		lastPrice.setSize(150,30);
 		lastPrice.setLocation(500,320);
 		lastPrice.setFont(myFont);
+		lastPrice.setEnabled(false);
+		lastPrice.setDisabledTextColor(Color.BLACK);
+		lastPrice.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		p.add(lastPrice);
 		
 		lastBTC.setSize(150,30);
 		lastBTC.setLocation(660,320);
 		lastBTC.setFont(myFont);
 		lastBTC.setText("On Hold");
+		lastBTC.setEnabled(false);
+		lastBTC.setDisabledTextColor(Color.BLACK);
+		lastBTC.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		p.add(lastBTC);
 		
 		lastTime.setSize(150,30);
 		lastTime.setLocation(820,320);
 		lastTime.setFont(myFont);
 		lastTime.setText("HOLD");
+		lastTime.setEnabled(false);
+		lastTime.setDisabledTextColor(Color.BLACK);
+		lastTime.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		p.add(lastTime);
 		
 		JLabel iterativeAlgTitle = new JLabel("Iterative Algorithm Trader Status");
@@ -268,6 +296,9 @@ public class BuildInterface {
 		p.add(usdBalance2);
 		usdBalance2.setLocation(500,445);
 		usdBalance2.setSize(180,30);
+		usdBalance2.setEnabled(false);
+		usdBalance2.setDisabledTextColor(Color.BLACK);
+		usdBalance2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		usdBalance2.setFont(myFontBalance);
 		usdBalance2.setHorizontalAlignment(JTextField.CENTER);
 		
@@ -279,6 +310,9 @@ public class BuildInterface {
 		p.add(btcBalance2);
 		btcBalance2.setLocation(700,445);
 		btcBalance2.setSize(180,30);
+		btcBalance2.setEnabled(false);
+		btcBalance2.setDisabledTextColor(Color.BLACK);
+		btcBalance2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		btcBalance2.setFont(myFontBalance);
 		btcBalance2.setHorizontalAlignment(JTextField.CENTER);
 		
@@ -290,18 +324,27 @@ public class BuildInterface {
 		lastPrice2.setSize(150,30);
 		lastPrice2.setLocation(500,520);
 		lastPrice2.setFont(myFont);
+		lastPrice2.setEnabled(false);
+		lastPrice2.setDisabledTextColor(Color.BLACK);
+		lastPrice2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		p.add(lastPrice2);
 		
 		status.setSize(150,30);
 		status.setLocation(660,520);
 		status.setFont(myFont);
 		status.setText("On Hold");
+		status.setEnabled(false);
+		status.setDisabledTextColor(Color.BLACK);
+		status.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		p.add(status);
 		
 		tradeAction.setSize(150,30);
 		tradeAction.setLocation(820,520);
 		tradeAction.setFont(myFont);
 		tradeAction.setText("HOLD");
+		tradeAction.setEnabled(false);
+		tradeAction.setDisabledTextColor(Color.BLACK);
+		tradeAction.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		p.add(tradeAction);
 		
 		JLabel buyholdTitle = new JLabel("Buy & Hold Returns");
@@ -322,11 +365,15 @@ public class BuildInterface {
 		btcBalance3.setSize(180,30);
 		btcBalance3.setFont(myFontBalance);
 		btcBalance3.setHorizontalAlignment(JTextField.CENTER);
+		btcBalance3.setEnabled(false);
+		btcBalance3.setDisabledTextColor(Color.BLACK);
+		btcBalance3.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		p.add(btcUsdEquivalent3);
 		btcUsdEquivalent3.setLocation(500,680);
 		btcUsdEquivalent3.setSize(180,20);
 		btcUsdEquivalent3.setFont(myFont);
+
 		
 		
 		//add(p);
@@ -340,7 +387,7 @@ public class BuildInterface {
 
 			FileWriter fw2 = new FileWriter(paramDB.getAbsoluteFile());
 			BufferedWriter bw2 = new BufferedWriter(fw2);
-			
+						
 			//Set String Values
 			String strPopSize = "eval.problem.size = " + txtPopSize.getText() + "\n";
 			bw2.write(txtPopSize.getText() + "\n");
@@ -352,9 +399,10 @@ public class BuildInterface {
 			bw2.write(txtTournSize.getText() + "\n");
 			String strNumElite = "breed.elite.0 = " + txtNumElite.getText() + "\n";
 			bw2.write(txtNumElite.getText() + "\n");
-			String strCrossProb = "pop.subpop.0.species.crossover-prob = " + txtCrossProb.getText() + "\n";
+			String strCrossProb = "pop.subpop.0.species.pipe.source.0.prob = " + txtCrossProb.getText() + "\n";
+			//NOTE: source.1.prob is for reproduction, which is already included in KOZA, so we skip it.
 			bw2.write(txtCrossProb.getText() + "\n");
-			String strMuteProb = "pop.subpop.0.species.mutation-prob = " + txtMuteProb.getText() + "\n";
+			String strMuteProb = "pop.subpop.0.species.pipe.source.2.prob = " + txtMuteProb.getText() + "\n";
 			bw2.write(txtMuteProb.getText() + "\n");
 			bw2.close();
 			File params = new File("src" + java.io.File.separator + "ec" + java.io.File.separator + "app" + java.io.File.separator + "bitcoinTrader" + java.io.File.separator + "bitcoinTrader.params");
