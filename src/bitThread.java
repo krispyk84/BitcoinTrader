@@ -17,9 +17,8 @@ public class bitThread implements Runnable{
 	private String marketName;
 	public double currentPrice;
 	
-	//Iterative Stuff
-	double averageDifferenceBSOK = 5;
-	int averageBookMark = 0;
+	
+	String lastTradeAction = "HOLD";
 	String lastTradeAction2 = "HOLD";
 	
 	double[] fakeTradeRules = {1,0,-1,0,1,0,-1,0,1,0,-1,0,1,0,-1,0,1,0,-1,0,1,0,-1,0,-1,0,1,0,-1,0,1,0,-1,0,1,0,-1,0,1,0,-1};
@@ -30,7 +29,7 @@ public class bitThread implements Runnable{
 	{
 		this.URL = URL;
 		this.outputFileName = outputFileName;
-		this.updateRate = 10;
+		this.updateRate = 9;
 		this.h = header.clone();
 		this.marketHeader = marketHeader;
 		this.currentMarket = currentMarket;
@@ -78,7 +77,7 @@ public class bitThread implements Runnable{
 			bw = new BufferedWriter(fw);
 			int lineCounter = 0;
 			int fakeTradeRuleIndex = 0;
-			String lastTradeAction = "HOLD";
+			
 			long startTime = System.currentTimeMillis();
 			while((System.currentTimeMillis()-startTime) < 604800000)
 			{
@@ -89,19 +88,19 @@ public class bitThread implements Runnable{
 				    while (!BasicSwing.allThreads) {
 				        if (this.marketName == "okcoin"){
 				        	BasicSwing.thread4 = true;
-				        	System.out.println(this.marketName  + " READY");
+				        	//System.out.println(this.marketName  + " READY");
 				        }
 				        if (this.marketName == "bitstamp"){
 				        	BasicSwing.thread1 = true;
-				        	System.out.println(this.marketName  + " READY");
+				        	//System.out.println(this.marketName  + " READY");
 				        }
 				        if (this.marketName == "bitfinex"){
 				        	BasicSwing.thread2 = true;
-				        	System.out.println(this.marketName  + " READY");
+				        	//System.out.println(this.marketName  + " READY");
 				        }
 				        if (this.marketName == "btce"){
 				        	BasicSwing.thread3 = true;
-				        	System.out.println(this.marketName + " READY");
+				        	//System.out.println(this.marketName + " READY");
 				        }
 				        BasicSwing.monitor.wait();
 				        break;
@@ -132,123 +131,72 @@ public class bitThread implements Runnable{
 					BasicSwing.okCoinRecords.add(currentPrice);
 				}
 				writeToFile(currentPrice+"", bw);
-				updateCurrentPrice(marketName, currentPrice);
-				
+				if(currentMarket){
+					BasicSwing.bitstampList.add(currentPrice);
+					BasicSwing.bitstampList.removeFirst();
+				} else if (outputFileName.equals("bitFinexHistoricalData.txt")){
+					BasicSwing.bitfinexList.add(currentPrice);
+					BasicSwing.bitfinexList.removeFirst();
+				} else if (outputFileName.equals("btcEHistoricalData.txt")){
+					BasicSwing.btceList.add(currentPrice);
+					BasicSwing.btceList.removeFirst();
+				} else {
+					BasicSwing.okcoinList.add(currentPrice);
+					BasicSwing.okcoinList.removeFirst();
+				}
+								
 				lineCounter++;
 				marketHeader.setText("");
 				marketHeader.append("Last:" 	+ apiData[h[1]] + "\n");
 				marketHeader.append("Bid:" 		+ apiData[h[2]] + "\n");
 				marketHeader.append("Ask:" 		+ apiData[h[3]] + "\n");
-				marketHeader.append("Volume:" 	+ (h[4] >= 0 ? apiData[h[4]] : "N/A") + "\n");
-				marketHeader.append(apiData[h[0]] + "\nUpdated Every " + updateRate + " sec");
-				System.out.println(lineCounter);
+				marketHeader.append("24h Volume:" 	+ (h[4] >= 0 ? apiData[h[4]] : "N/A") + "\n");
+				marketHeader.append(System.currentTimeMillis()+ "\nUpdated Every " +(1+updateRate) + " sec"); //apiData[h[0]] 
+				System.out.println(lineCounter); //for debug, to remove
 				
-				if(lineCounter == 1 && currentMarket){
-					BasicSwing.buyHoldBTCBalance = 1000/Double.parseDouble(apiData[h[1]]);
-					BasicSwing.btcBalance3.setText("BTC " + BasicSwing.buyHoldBTCBalance);
-					BasicSwing.btcUsdEquivalent3.setText("Sells For: $" + String.format("%.2f", BasicSwing.buyHoldBTCBalance*Double.parseDouble(apiData[h[1]])));
+				if(!BasicSwing.buyHoldCalculated && currentMarket && !BasicSwing.PAUSE){
+					HelperMethods.setBuyHold(apiData[h[1]]);
+				}
+				if(currentMarket){
+					HelperMethods.updateBalanceStatusBoard(apiData[h[1]]);
 				}
 				
-				if(currentMarket){
+				if(currentMarket && !BasicSwing.PAUSE){
 					BasicSwing.btcUsdEquivalent3.setText("Sells For: $" + String.format("%.2f", BasicSwing.buyHoldBTCBalance*Double.parseDouble(apiData[h[1]])));
 					
 					BasicSwing.bitStampRecords.add(currentPrice);
 					BasicSwing.currentMarketPrice = Double.parseDouble(apiData[h[3]]);
-					if(BasicSwing.currentUSDBalance > 0){
-						BasicSwing.usdBtcEquivalent.setText("Buys: BTC "+ (BasicSwing.currentUSDBalance/(Double.parseDouble(apiData[h[1]]))));
-						BasicSwing.btcUsdEquivalent.setText("Sells For: $0.00");
-					} else {
-						BasicSwing.usdBtcEquivalent.setText("Buys: BTC 0.00000000");
-						BasicSwing.btcUsdEquivalent.setText("Sells For: $" + String.format("%.2f", BasicSwing.currentBTCBalance2*Double.parseDouble(apiData[h[1]])));	
-					}
-					if(BasicSwing.currentUSDBalance2 > 0){						
-						BasicSwing.usdBtcEquivalent2.setText("Buys: BTC "+ (BasicSwing.currentUSDBalance/(Double.parseDouble(apiData[h[1]]))));
-						BasicSwing.btcUsdEquivalent2.setText("Sells For: $0.00");
-					} else {
-						BasicSwing.usdBtcEquivalent2.setText("Buys: BTC 0.00000000");
-						BasicSwing.btcUsdEquivalent2.setText("Sells For: $" + String.format("%.2f", BasicSwing.currentBTCBalance2*Double.parseDouble(apiData[h[1]])));	
-					}
+
 					
 					BasicSwing.lastPrice.setText("$"+currentPrice);
-					if(lineCounter > 3){
-						//double tradeAction = fakeTradeRules[fakeTradeRuleIndex];
+					//Put last price for iterative here...
+					if(lineCounter > 1){
 						
 						BasicSwing.lastBTC.setText("Active");
-						double tradeAction = HelperMethods.calcFromGPProgram(currentPrice);
+						//put active for iterative method here
+						
+						double tradeAction = fakeTradeRules[fakeTradeRuleIndex];						
+						//double tradeAction = HelperMethods.calcFromGPProgram(currentPrice);
 						System.out.println(currentPrice+"");
 						System.out.println("TradeAction: "+ tradeAction);
 						
 						HelperMethods.makeGPTrade(tradeAction, lastTradeAction, currentPrice);
 						
-						if(lineCounter%240 == 0){
-							if(BasicSwing.bitStampRecords.size() < 776390){
-								averageDifferenceBSOK = HelperMethods.calcIterativeAverage(BasicSwing.bitStampRecords, BasicSwing.okCoinRecords, averageDifferenceBSOK, averageBookMark);
-							} else {
-								averageDifferenceBSOK = HelperMethods.calcRollingAverageDiff(BasicSwing.bitStampRecords, BasicSwing.okCoinRecords);
-							}
-						}
-						
-						int iterativeTradeRule = HelperMethods.getIterativeTradingRule(BasicSwing.bitStampRecords, BasicSwing.okCoinRecords, averageDifferenceBSOK);
-						//int iterativeTradeRule = fakeIterativeTradeRules[fakeTradeRuleIndex];
+						int iterativeTradeRule = fakeIterativeTradeRules[fakeTradeRuleIndex];
+						//int iterativeTradeRule = HelperMethods.getIterativeTradingRule(BasicSwing.bitStampRecords, BasicSwing.okCoinRecords, BasicSwing.averageDifferenceBSOK);
 						System.out.println("IT TradeRule: " + iterativeTradeRule);
 						fakeTradeRuleIndex++;
-						if(iterativeTradeRule == 1){
-							if(!lastTradeAction2.equals("BUY")){
-								if(BasicSwing.currentUSDBalance2 > 0){
-									BasicSwing.oldUSDBalance2 = BasicSwing.currentUSDBalance2;
-									BasicSwing.currentBTCBalance2 = (BasicSwing.currentUSDBalance2)/(currentPrice);
-									BasicSwing.usdBalance2.setText("$0.00 USD");
-									BasicSwing.btcBalance2.setText("BTC " + BasicSwing.currentBTCBalance2);
-									BasicSwing.tradeAction.setText("BUY");
-									BasicSwing.usdBtcEquivalent2.setText("Buys: BTC " + 0.00000000);
-									BasicSwing.btcUsdEquivalent2.setText("Sells For: $" + String.format("%.2f", BasicSwing.currentBTCBalance2*(currentPrice)));
-								}
-								lastTradeAction2 = "BUY";
-							} else {
-								BasicSwing.tradeAction.setText("HOLD");
-							}
-						} else if (iterativeTradeRule == -1){
-							if(!lastTradeAction2.equals("SELL")){
-								if(BasicSwing.currentBTCBalance2 > 0){
-									BasicSwing.oldBTCBalance2 = BasicSwing.currentBTCBalance2;
-									BasicSwing.currentUSDBalance2 = BasicSwing.currentBTCBalance2*currentPrice;
-									BasicSwing.btcBalance2.setText("BTC 0.0000000");
-									BasicSwing.usdBalance2.setText("$" + String.format("%.2f", BasicSwing.currentUSDBalance2) + " USD");
-									BasicSwing.tradeAction.setText("SELL");
-									BasicSwing.usdBtcEquivalent2.setText("Buys: BTC "+ (BasicSwing.currentUSDBalance2/(currentPrice)));
-									BasicSwing.btcUsdEquivalent2.setText("Sells For: $" + 0.00+" USD");
-								}								
-								lastTradeAction2 = "SELL";
-							} else {
-								BasicSwing.lastTime.setText("HOLD");
-							}
-						} else {
-							BasicSwing.tradeAction.setText("HOLD");
-						}
+						HelperMethods.makeIterativeTrade(iterativeTradeRule, lastTradeAction2, currentPrice);
 						
 					}
 				}
-				System.out.println("END OF THREAD");
+				//System.out.println("END OF THREAD");
 			}	
 			
 			bw.close();
 		
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-	
-	public void updateCurrentPrice(String marketName, double currentPrice){
-		if(marketName.equals("bitstamp")){
-			BasicSwing.currentBistampPrice = currentPrice;
-		} else if (marketName.equals("btce")){
-			BasicSwing.currentBTCEPrice = currentPrice;
-		} else if (marketName.equals("bitfinex")){
-			BasicSwing.currentBitfinexPrice = currentPrice;
-		} else if (marketName.equals("okcoin")){
-			BasicSwing.currentOKCoinPrice = currentPrice;
-		} else {
-			System.out.println("Failed on updateCurrentPrice()");
 		}
 	}
 	

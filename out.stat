@@ -6,13 +6,17 @@ Generation 0
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.9433503 adjusted: 0.51551485 hits: 13.0859375
+Mean fitness raw: 0.96617556 adjusted: 0.50888586 hits: 756.310546875
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7272727272727273 Adjusted=0.5789473684210527 Hits=63
+Fitness: Standardized=0.8758944543828264 Adjusted=0.5330790320658004 Hits=2775
 Tree 0:
- (cos (+ AverageOver30s VarBwBSandBT60s))
+ (sin (/ (IfThenElse (* (exp VarBwBSandBT120s)
+     (cos 1.4336167294166346)) (/ (exp VolatilityOver120s)
+     (- VarBwBSandOK240s MaxValueOver90s)) (exp
+     (/ -6.589047434733084 VarBwBSandBT120s)))
+     (sin (sin (exp AverageOver60s)))))
 
 
 
@@ -21,13 +25,15 @@ Generation 1
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.9020601 adjusted: 0.52688885 hits: 22.6240234375
+Mean fitness raw: 0.9401321 adjusted: 0.5157656 hits: 1338.6279296875
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7272727272727273 Adjusted=0.5789473684210527 Hits=63
+Fitness: Standardized=0.8750894454382826 Adjusted=0.5333078922889785 Hits=2793
 Tree 0:
- (cos (+ AverageOver30s VarBwBSandBT60s))
+ (/ (sin (rlog (sin (- VarBwBSandBF240s MinValueOver30s))))
+     (cos (* (rlog (- AverageOver60s (- MinValueOver120s
+         AverageOver120s))) (cos (exp VarBwBSandBF120s)))))
 
 
 
@@ -36,13 +42,14 @@ Generation 2
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.86936015 adjusted: 0.5360836 hits: 30.177734375
+Mean fitness raw: 0.92125285 adjusted: 0.5208022 hits: 1760.7763671875
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7272727272727273 Adjusted=0.5789473684210527 Hits=63
+Fitness: Standardized=0.8746869409660107 Adjusted=0.5334223961066845 Hits=2802
 Tree 0:
- (cos (+ AverageOver30s VarBwBSandBT60s))
+ (sin (exp (+ (- RateOfChangeOver30s AverageOver60s)
+     (+ VarBwBSandBT120s AverageOver120s))))
 
 
 
@@ -51,18 +58,19 @@ Generation 3
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.8513641 adjusted: 0.54123753 hits: 34.3349609375
+Mean fitness raw: 0.912433 adjusted: 0.52319086 hits: 1958.0078125
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7186147186147186 Adjusted=0.5818639798488665 Hits=65
+Fitness: Standardized=0.8742844364937388 Adjusted=0.5335369491040111 Hits=2811
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- VolatilityOver60s MaxValueOver60s)
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (rlog AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (/ (IfThenElse VolatilityOver60s
+     MaxValueOver30s RelativeStrengthIndexOver90s)
+     (- VarBwBSandOK240s VarBwBSandBT60s)) (/
+     (cos RelativeStrengthIndexOver120s) (+ MinValueOver120s
+     AverageOver30s)) (* (cos MacdValue) (rlog
+     VarBwBSandBF60s))) (sin (* MaxValueOver90s
+     (rlog MaxValueOver90s))))
 
 
 
@@ -71,18 +79,17 @@ Generation 4
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.8444557 adjusted: 0.5432486 hits: 35.9306640625
+Mean fitness raw: 0.9042754 adjusted: 0.5253797 hits: 2140.388671875
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7142857142857143 Adjusted=0.5833333333333333 Hits=66
+Fitness: Standardized=0.8739266547406083 Adjusted=0.5336388153027374 Hits=2819
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (sin (/ VarBwBSandBF240s AverageOver90s))
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (rlog AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (rlog MaxValueOver60s) (sin
+     (- VarBwBSandBF240s MinValueOver30s)) (*
+     (rlog AverageOver30s) (IfThenElse VarBwBSandOK120s
+     VolatilityOver120s AverageOver60s))) (cos
+     (/ (exp AverageOver90s) (cos AverageOver30s))))
 
 
 
@@ -91,19 +98,24 @@ Generation 5
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.84174657 adjusted: 0.5440614 hits: 36.556640625
+Mean fitness raw: 0.9029742 adjusted: 0.52574253 hits: 2169.4873046875
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7142857142857143 Adjusted=0.5833333333333333 Hits=66
+Fitness: Standardized=0.872093023255814 Adjusted=0.5341614906832298 Hits=2860
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- (/ (exp VarBwBSandBT120s) (rlog
-         MinValueOver120s)) MaxValueOver60s) (* MaxValueOver90s
-         VolatilityOver120s)) (/ (rlog RelativeStrengthIndexOver60s)
-         (/ VarBwBSandBT60s VarBwBSandBF120s))) (-
-         (sin (rlog AverageOver120s)) (exp (+ MinValueOver30s
-         MaxValueOver90s)))))
+ (- (IfThenElse (/ (IfThenElse VolatilityOver60s
+     MaxValueOver30s RelativeStrengthIndexOver90s)
+     (- VarBwBSandOK240s VarBwBSandBT60s)) (IfThenElse
+     (* (cos (* (sin (exp AverageOver60s)) (rlog
+         RelativeStrengthIndexOver30s))) (sin (/ (sin
+         VolatilityOver60s) (cos RateOfChangeOver90s))))
+     (* AverageOver60s RateOfChangeOver30s) (/
+     VarBwBSandOK120s (/ (IfThenElse VolatilityOver60s
+     MaxValueOver30s RelativeStrengthIndexOver90s)
+     (- VarBwBSandOK240s VarBwBSandBT60s)))) (*
+     (cos VarBwBSandBF60s) (rlog VarBwBSandBF60s)))
+     (sin (* MaxValueOver90s (rlog MaxValueOver90s))))
 
 
 
@@ -112,19 +124,32 @@ Generation 6
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.83257675 adjusted: 0.5466942 hits: 38.6748046875
+Mean fitness raw: 0.90132284 adjusted: 0.5261927 hits: 2206.4169921875
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7056277056277056 Adjusted=0.5862944162436549 Hits=68
+Fitness: Standardized=0.871824686940966 Adjusted=0.534238065656807 Hits=2866
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- (/ (+ AverageOver30s VarBwBSandBT60s)
-         (rlog MinValueOver120s)) MaxValueOver60s)
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (rlog AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (/ (IfThenElse VolatilityOver60s
+     MaxValueOver30s (+ (sin AverageOver90s) (cos
+     RelativeStrengthIndexOver30s))) (- VarBwBSandOK240s
+     VarBwBSandBT60s)) (IfThenElse (sin VarBwBSandBT240s)
+     (* AverageOver60s RateOfChangeOver30s) (sin
+     (- (IfThenElse (- (sin MinValueOver30s) (sin
+         MinValueOver60s)) (/ VarBwBSandOK240s RelativeStrengthIndexOver120s)
+         (exp VarBwBSandBF60s)) (IfThenElse (sin (rlog
+         (exp (sin (exp MinValueOver30s))))) (- (*
+         (/ (rlog VolatilityOver120s) (+ VarBwBSandOK120s
+             MaxValueOver90s)) (* (IfThenElse -7.21428357201802
+         RelativeStrengthIndexOver120s AverageOver120s)
+         (* MaxValueOver60s MaxValueOver60s))) (-
+         (exp (exp MaxValueOver60s)) (exp (exp MaxValueOver60s))))
+         (/ (cos VolatilityOver120s) (exp (* (IfThenElse
+             (exp AverageOver60s) (sin VarBwBSandBT240s)
+             (exp RelativeStrengthIndexOver30s)) (- MinValueOver90s
+             MinValueOver120s)))))))) (* (cos VarBwBSandBF60s)
+     (rlog VarBwBSandBF60s))) (sin (* MaxValueOver90s
+     (rlog MaxValueOver90s))))
 
 
 
@@ -133,19 +158,20 @@ Generation 7
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.82366586 adjusted: 0.5493918 hits: 40.7333984375
+Mean fitness raw: 0.89584637 adjusted: 0.52765477 hits: 2328.8564453125
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7056277056277056 Adjusted=0.5862944162436549 Hits=68
+Fitness: Standardized=0.871824686940966 Adjusted=0.534238065656807 Hits=2866
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- (/ (+ AverageOver30s VarBwBSandBT60s)
-         (rlog MinValueOver120s)) MaxValueOver60s)
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (rlog AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (sin VolatilityOver120s) (IfThenElse
+     (sin VarBwBSandBT240s) (* AverageOver60s
+     RateOfChangeOver30s) (sin (/ (* (/ VarBwBSandBF120s
+     VarBwBSandBF120s) (exp RelativeStrengthIndexOver90s))
+     (sin (+ (IfThenElse VolatilityOver60s MinValueOver60s
+         VolatilityOver60s) (+ AverageOver90s AverageOver90s))))))
+     (* (cos VarBwBSandBF60s) (rlog VarBwBSandBF60s)))
+     (sin (* MaxValueOver90s (rlog MaxValueOver90s))))
 
 
 
@@ -154,22 +180,32 @@ Generation 8
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.81588596 adjusted: 0.55173355 hits: 42.5302734375
+Mean fitness raw: 0.89387196 adjusted: 0.52819777 hits: 2373.0205078125
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7056277056277056 Adjusted=0.5862944162436549 Hits=68
+Fitness: Standardized=0.871824686940966 Adjusted=0.534238065656807 Hits=2866
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- (/ (+ AverageOver30s VarBwBSandBT60s)
-         (rlog MinValueOver120s)) MaxValueOver60s)
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (* (* (+ (sin
-         (/ VarBwBSandBF240s AverageOver90s)) (* MaxValueOver90s
-         VolatilityOver120s)) (/ (rlog MinValueOver120s)
-         (/ VarBwBSandBT60s VarBwBSandBF120s))) AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (/ (IfThenElse VolatilityOver60s
+     MaxValueOver30s (+ (sin AverageOver90s) (cos
+     RelativeStrengthIndexOver30s))) (- VarBwBSandOK240s
+     VarBwBSandBT60s)) (IfThenElse (sin VarBwBSandBT240s)
+     (* AverageOver60s RateOfChangeOver30s) (sin
+     (- (IfThenElse (- (sin MinValueOver30s) (sin
+         MinValueOver60s)) (/ VarBwBSandOK240s RelativeStrengthIndexOver120s)
+         (exp VarBwBSandBF60s)) (IfThenElse (sin (rlog
+         (exp (sin (exp MinValueOver30s))))) (- (*
+         (/ (rlog VolatilityOver120s) (+ VarBwBSandOK120s
+             MaxValueOver90s)) (* (IfThenElse -7.21428357201802
+         RelativeStrengthIndexOver120s AverageOver120s)
+         (* MaxValueOver60s MaxValueOver60s))) (-
+         (exp (exp MaxValueOver60s)) (exp (exp MaxValueOver60s))))
+         (/ (cos VolatilityOver120s) (exp (* (IfThenElse
+             (exp AverageOver60s) (sin VarBwBSandBT240s)
+             (exp RelativeStrengthIndexOver30s)) (- MinValueOver90s
+             MinValueOver120s)))))))) (* (cos VarBwBSandBF60s)
+     (rlog VarBwBSandBF60s))) (sin (* MaxValueOver90s
+     (rlog MaxValueOver90s))))
 
 
 
@@ -178,37 +214,87 @@ Generation 9
 
 Subpopulation 0
 ----------------
-Mean fitness raw: 0.8099759 adjusted: 0.5535487 hits: 43.8955078125
+Mean fitness raw: 0.88988674 adjusted: 0.5292662 hits: 2462.1298828125
 
 Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7056277056277056 Adjusted=0.5862944162436549 Hits=68
+Fitness: Standardized=0.8716010733452594 Adjusted=0.5343018949078832 Hits=2871
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- (/ (+ AverageOver30s VarBwBSandBT60s)
-         (rlog MinValueOver120s)) MaxValueOver60s)
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (* (* (+ (sin
-         (/ VarBwBSandBF240s AverageOver90s)) (* MaxValueOver90s
-         VolatilityOver120s)) (/ (rlog MinValueOver120s)
-         (/ VarBwBSandBT60s VarBwBSandBF120s))) AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (sin (/ (cos (cos MinValueOver90s))
+     MaxValueOver60s)) (IfThenElse (sin VarBwBSandBT240s)
+     (* AverageOver60s RateOfChangeOver30s) (sin
+     (sin (sin (cos VolatilityOver60s))))) (*
+     (cos VarBwBSandBF60s) (rlog VarBwBSandBF60s)))
+     (sin (* MaxValueOver90s (rlog MaxValueOver90s))))
 
 
 
-Final Statistics
+Generation 10
 ================
-Total Individuals Evaluated: 10240
 
-Best Individual of Run:
+Subpopulation 0
+----------------
+Mean fitness raw: 0.8885314 adjusted: 0.5296305 hits: 2492.43359375
+
+Best Individual of Generation:
 Evaluated: true
-Fitness: Standardized=0.7056277056277056 Adjusted=0.5862944162436549 Hits=68
+Fitness: Standardized=0.8706171735241502 Adjusted=0.5345829249049656 Hits=2893
 Tree 0:
- (+ (cos (+ AverageOver30s VarBwBSandBT60s))
-     (* (* (+ (- (/ (+ AverageOver30s VarBwBSandBT60s)
-         (rlog MinValueOver120s)) MaxValueOver60s)
-         (* MaxValueOver90s VolatilityOver120s)) (/
-         (rlog RelativeStrengthIndexOver60s) (/ VarBwBSandBT60s
-         VarBwBSandBF120s))) (- (sin (rlog AverageOver120s))
-         (exp (+ MinValueOver30s MaxValueOver90s)))))
+ (- (IfThenElse (/ (/ (+ (/ VolatilityOver30s
+     MinValueOver60s) (cos (* MaxValueOver90s
+     (rlog MaxValueOver90s)))) (cos MaxValueOver120s))
+     (- VarBwBSandOK240s VarBwBSandBT60s)) (IfThenElse
+     (sin VarBwBSandBT240s) (* AverageOver60s
+     RateOfChangeOver30s) (sin (- (IfThenElse
+     (cos MaxValueOver90s) (/ VarBwBSandOK240s
+     RelativeStrengthIndexOver120s) (* 0.5391712917702556
+     MaxValueOver60s)) (sin RateOfChangeOver60s))))
+     (* (cos VarBwBSandBF60s) (rlog VarBwBSandBF60s)))
+     (sin (* MaxValueOver90s (rlog MaxValueOver90s))))
+
+
+
+Generation 11
+================
+
+Subpopulation 0
+----------------
+Mean fitness raw: 0.88753414 adjusted: 0.5299165 hits: 2514.7265625
+
+Best Individual of Generation:
+Evaluated: true
+Fitness: Standardized=0.8706171735241502 Adjusted=0.5345829249049656 Hits=2893
+Tree 0:
+ (- (IfThenElse (/ (/ (+ (/ VolatilityOver30s
+     MinValueOver60s) (cos (* MaxValueOver90s
+     (rlog MaxValueOver90s)))) (cos MaxValueOver120s))
+     (- VarBwBSandOK240s VarBwBSandBT60s)) (IfThenElse
+     (sin VarBwBSandBT240s) (* AverageOver60s
+     RateOfChangeOver30s) (sin (- (IfThenElse
+     (cos MaxValueOver90s) (/ VarBwBSandOK240s
+     RelativeStrengthIndexOver120s) (* 0.5391712917702556
+     MaxValueOver60s)) (sin RateOfChangeOver60s))))
+     (* (cos VarBwBSandBF60s) (rlog VarBwBSandBF60s)))
+     (sin (* MaxValueOver90s (rlog MaxValueOver90s))))
+
+
+
+Generation 12
+================
+
+Subpopulation 0
+----------------
+Mean fitness raw: 0.88647836 adjusted: 0.53020054 hits: 2538.328125
+
+Best Individual of Generation:
+Evaluated: true
+Fitness: Standardized=0.8705724508050089 Adjusted=0.5345957060201788 Hits=2894
+Tree 0:
+ (- (IfThenElse (/ (IfThenElse VolatilityOver60s
+     MaxValueOver30s (+ (sin AverageOver90s) (cos
+     RelativeStrengthIndexOver30s))) (- VarBwBSandOK240s
+     VarBwBSandBT60s)) (IfThenElse (sin VarBwBSandBT240s)
+     (* AverageOver60s RateOfChangeOver30s) (sin
+     (- VarBwBSandOK240s AverageOver60s))) (*
+     (cos VarBwBSandBF60s) (rlog VarBwBSandBF60s)))
+     (sin (* MaxValueOver90s (rlog MaxValueOver90s))))

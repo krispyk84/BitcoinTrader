@@ -3,6 +3,7 @@ package ec.app.bitcoinTrader;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class FinancialFunctions {
 
@@ -12,6 +13,18 @@ public class FinancialFunctions {
 		if ((current - seconds) >= 0) {
 			for (int i = current; i >= current - seconds; i--) {
 				average += Double.parseDouble(homeMarket[i]);
+			}
+
+			average = average / seconds;
+		}
+		return average;
+	}
+	
+	public static double averageOverX(int seconds, int current, LinkedList<Double> homeMarket) {
+		double average = 0.0;
+		if ((current - seconds) >= 0) {
+			for (int i = current; i >= current - seconds; i--) {
+				average += homeMarket.get(i);
 			}
 
 			average = average / seconds;
@@ -41,6 +54,17 @@ public class FinancialFunctions {
 		}
 		return roc;
 	}
+	
+	public static double rateOfChangeOverX(int seconds, int current, LinkedList<Double> homeMarket) {
+		double roc = 0.0;
+
+		if ((current - seconds) >= 0) {
+			double endPrice = homeMarket.get(current);
+			double startPrice = homeMarket.get(current-seconds);
+			roc = (endPrice / startPrice) * 100;
+		}
+		return roc;
+	}
 
 	// Returns the relative strength index from the relative strength
 	// calculation
@@ -48,9 +72,10 @@ public class FinancialFunctions {
 		return (100 - (100 / (1 + relativeStrength(seconds, current))));
 	}
 	
-	public static double relativeStrengthIndexOverN(int seconds, int current, String[] homeMarket) {
-		return (100 - (100 / (1 + relativeStrength(seconds, current))));
+	public static double relativeStrengthIndexOverN(int seconds, int current, LinkedList<Double> homeMarket) {
+		return (100 - (100 / (1 + relativeStrength(seconds, current, homeMarket))));
 	}
+	
 
 	// Relative strength calculation, which takes the sum of returns from
 	// positive seconds in a window of X seconds, and the sum of negative
@@ -78,14 +103,14 @@ public class FinancialFunctions {
 		return relativeStrength;
 	}
 	
-	public static double relativeStrength(int seconds, int current, String[] homeMarket) {
+	public static double relativeStrength(int seconds, int current, LinkedList<Double> homeMarket) {
 		double relativeStrength = 0.0;
 		double positiveSumReturn = 0;
 		double negativeSumReturn = 0;
 		if ((current + seconds) <= MultiValuedRegression.totalSize && (current - 1) >= 0) {
 			for (int i = 0; i < seconds; i++) {
-				double currentSecond = Double.parseDouble(homeMarket[current + i]);
-				double previousSecond = Double.parseDouble(homeMarket[current + i - 1]);
+				double currentSecond = homeMarket.get(current+i);
+				double previousSecond = homeMarket.get(current+i - 1);
 				double returnValue = currentSecond - previousSecond;
 				if (returnValue > 0) {
 					positiveSumReturn += returnValue;
@@ -112,8 +137,23 @@ public class FinancialFunctions {
 		}
 		return ema;
 	}
+	
+	public static double exponentialMovingAverage(int seconds, int current, LinkedList<Double> homeMarket) {
+		double ema = 0.0;
+		if ((current - seconds) >= 0) {
+			double secondsAverage = averageOverX(seconds, current - seconds, homeMarket);
+			double currentClosingPrice = homeMarket.get(current);
+			ema = currentClosingPrice * (2 / (seconds + 1)) + secondsAverage * (1 - (2 / (seconds + 1)));
+		}
+		return ema;
+	}
 
 	public static double MACD(int current, String[] homeMarket) {
+		double macd = exponentialMovingAverage(12, current, homeMarket) - exponentialMovingAverage(26, current, homeMarket);
+		return macd;
+	}
+	
+	public static double MACD(int current, LinkedList<Double> homeMarket) {
 		double macd = exponentialMovingAverage(12, current, homeMarket) - exponentialMovingAverage(26, current, homeMarket);
 		return macd;
 	}
@@ -131,25 +171,37 @@ public class FinancialFunctions {
 		return max;
 	}
 	
-	public static double maxValueOverX(int seconds, int current, String[] homeMarket) {
+	public static double maxValueOverX(int seconds, int current, LinkedList<Double> homeMarket) {
 		double max = 0.0;
 		if ((current - seconds) >= 0) {
 			for (int i = current; i >= (current - seconds); i--) {
-				if (Double.parseDouble(homeMarket[i]) > max) {
-					max = Double.parseDouble(homeMarket[i]);
+				if (homeMarket.get(i) > max) {
+					max = homeMarket.get(i);
 				}
 			}
 		}
 		return max;
 	}
 
-	// Minimum Value over X seconds
 	public static double minValueOverX(int seconds, int current, String[] homeMarket) {
 		double min = Double.MAX_VALUE;
 		if ((current - seconds) >= 0) {
 			for (int i = current; i >= (current - seconds); i--) {
 				if (Double.parseDouble(homeMarket[i]) < min) {
 					min = Double.parseDouble(homeMarket[i]);
+				}
+			}
+		}
+		return min;
+	}
+	
+	// Minimum Value over X seconds
+	public static double minValueOverX(int seconds, int current, LinkedList<Double> homeMarket) {
+		double min = Double.MAX_VALUE;
+		if ((current - seconds) >= 0) {
+			for (int i = current; i >= (current - seconds); i--) {
+				if (homeMarket.get(i) < min) {
+					min = homeMarket.get(i);
 				}
 			}
 		}
@@ -195,6 +247,18 @@ public class FinancialFunctions {
 		}
 		return toReturn;
 	}
+	
+	public static double currentVarianceValue(LinkedList<Double> homeMarket, LinkedList<Double> otherMarket, double averageDiff, int current, int seconds) {
+		double averageHome = averageOverX(seconds, current, homeMarket);
+		double averageAway = averageOverX(seconds, current, otherMarket);
+		double difference = averageAway - averageHome;
+		double toReturn = 0.0;
+
+		if (Math.abs(difference) > Math.abs(averageDiff)) {
+			toReturn = difference;
+		}
+		return toReturn;
+	}
 
 	// Calculates the volatility or standard deviation of the price over x time
 	public static double volatility(int seconds, int current, String[] homeMarket) {
@@ -205,6 +269,21 @@ public class FinancialFunctions {
 
 			for (int i = current; i >= current - seconds; i--) {
 				sumOfSquares += Math.pow((Double.parseDouble(homeMarket[i]) - mean), 2);
+			}
+			standardDeviation = Math.sqrt(sumOfSquares);
+		}
+		return standardDeviation;
+	}
+	
+	// Calculates the volatility or standard deviation of the price over x time
+	public static double volatility(int seconds, int current, LinkedList<Double> homeMarket) {
+		double standardDeviation = 0.0;
+		if ((current - seconds) >= 0) {
+			double mean = averageOverX(seconds, current, homeMarket);
+			double sumOfSquares = 0.0;
+
+			for (int i = current; i >= current - seconds; i--) {
+				sumOfSquares += Math.pow((homeMarket.get(i) - mean), 2);
 			}
 			standardDeviation = Math.sqrt(sumOfSquares);
 		}

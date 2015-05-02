@@ -116,24 +116,13 @@ gp.fs.0.func.42.nc = nc1
 
 #Setting up our problem:
 eval.problem = ec.app.bitcoinTrader.MultiValuedRegression
-eval.problem.data = ec.app.bitcoinTrader.DoubleData
-eval.problem.size = 776930
-eval.problem.trainingSetSize = 2331
-
-generations = 500
-
-select.tournament.size = 3
-
-breed.elite.0 = 3
+eval.problem.data = ac.essex.ooechs.ecj.ecj2java.example.data.DoubleData
 
 # gp.tree.print-style = latex
 
 breedthreads = auto
 evalthreads = auto
 
-#Print koza statistics
-stat.num-children = 1
-stat.child.0 = ec.gp.koza.KozaShortStatistics 
-stat.child.0.modulus = 5
-stat.child.0.file = $out3.stat
-stat.file = $bitcoinTraderStats3.stat
+# Statistics
+
+stat = ec.util.StatisticsPrinter

@@ -62,7 +62,7 @@ public class IfThenElse extends ParseableGPNode
 	
 	@Override
 	public String getJavaCode() { 
-        return "If("+getChild(0).getVariableName()+"){ return "+getChild(1).getVariableName()+"}Else{ return "+getChild(2).getVariableName()+"}"; 
+		return "( "+getChild(0).getVariableName()+">=1 ) ? "+getChild(1).getVariableName()+" : "+getChild(2).getVariableName();
     }
 
 	@Override

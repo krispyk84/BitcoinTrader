@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -39,30 +40,33 @@ import bitcoinUI.BuildInterface;
 import ec.app.bitcoinTrader.FinancialFunctions;
 
 public class BasicSwing extends JFrame implements ActionListener {
+	
 	private static final long serialVersionUID = 1L;
+	
 	JPanel p = new JPanel();
+	
 	public final static Object monitor = new Object();
 	
-	public static String mainParamsFile = "bitcoinTrader.params";
+	//Thread booleans for syncrhonization
 	public static boolean thread1 = false;
 	public static boolean thread2 = false;
 	public static boolean thread3 = false;
 	public static boolean thread4 = false;
 	public static boolean allThreads = false;
 	
+	//Booleans for stop and pause
 	public static boolean STOP = false;
-	public static boolean PAUSE = false;
+	public static boolean PAUSE = true;
 	
 	public static JTextArea marketsHeaderBitstamp = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderOKCoin = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderBitfinex = new JTextArea("Loading Market Data...");
 	public static JTextArea marketsHeaderBtcE = new JTextArea("Loading Market Data...");
-	public static JLabel marketSectionTitle = new JLabel("Market Snapshot");
 	
-	public static JLabel parametersTitle = new JLabel("Modify GP parameters");
-	public static JTextArea paramatersText = new JTextArea(5,20);
 	
-	public static JLabel controlsTitle = new JLabel("Controls");
+	//PARAM TEXT BOX
+	//public static JTextArea paramatersText = new JTextArea(5,20);
+	
 	public static JButton start = new JButton("START");
 	public static JButton pause = new JButton("PAUSE");
 	public static JButton stop = new JButton("STOP");
@@ -72,7 +76,6 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static JTextField lastBTC = new JTextField();
 	public static JTextField lastTime = new JTextField();
 	
-	public static JLabel accountBalancesTitles = new JLabel("Account Balances");
 	public static JTextField usdBalance = new JTextField("$1000.00 USD");
 	public static JLabel usdBtcEquivalent = new JLabel("Loading...");
 	public static JTextField btcBalance = new JTextField("0.00000000 BTC");
@@ -91,13 +94,7 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static double oldUSDBalance2 = 0.0;
 	public static double oldBTCBalance2 = 0.0;
 	
-	public static double currentBistampPrice;
-	public static double currentBitfinexPrice;
-	public static double currentBTCEPrice;
-	public static double currentOKCoinPrice;
-	
 	//The UI Objects for the Iterative Algorithm
-	public static JLabel accountBalancesTitles2 = new JLabel("Account Balances");
 	public static JTextField usdBalance2 = new JTextField("$1000.00 USD");
 	public static JLabel usdBtcEquivalent2 = new JLabel("Loading...");
 	public static JTextField btcBalance2 = new JTextField("0.00000000 BTC");
@@ -108,7 +105,6 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static JTextField tradeAction = new JTextField();
 	
 	//The UI Objects for the Iterative Algorithm
-	public static JLabel accountBalancesTitles3 = new JLabel("Current Bitcoin Balance and Value");
 	public static JTextField btcBalance3 = new JTextField("0.00000000 BTC");
 	public static JLabel btcUsdEquivalent3 = new JLabel("Loading...");
 		
@@ -116,13 +112,45 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static ArrayList<Double> bitStampRecords = new ArrayList<Double>();
 	public static ArrayList<Double> okCoinRecords = new ArrayList<Double>();
 	public static double totalDiff;
+	public static double averageDifferenceBSOK = 5;
+	public static double averageDifferenceBSBF = 5;
+	public static double averageDifferenceBSBT = 5;
 	
 	//BuyHold Variables
 	public static double buyHoldBTCBalance;
+	public static boolean buyHoldCalculated = false;
+	
+	//These Linked Lists hold the historic price data. LIFO when reaches size of 240+
+	static LinkedList<Double> bitstampList;// = new LinkedList<Double>();
+	static LinkedList<Double> bitfinexList = new LinkedList<Double>();
+	static LinkedList<Double> btceList = new LinkedList<Double>();
+	static LinkedList<Double> okcoinList = new LinkedList<Double>();
+	
 	
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception
-	{		
+	{	
+		System.out.println("Calculating Historic Average Difference");
+		System.out.println("Loading...");
+		String[] bitstampArray = HelperMethods.readFromFile("bitstampEvery10Seconds.txt");
+		String[] okcoinArray = HelperMethods.readFromFile("okcoinEvery10Seconds.txt");
+		String[] bitfinexArray = HelperMethods.readFromFile("bitfinexEvery10Seconds.txt");
+		String[] btceArray = HelperMethods.readFromFile("btceEvery10Seconds.txt");
+		
+		averageDifferenceBSOK = HelperMethods.calculateHistoricAverageDifference(bitstampArray, okcoinArray);
+		averageDifferenceBSBF = HelperMethods.calculateHistoricAverageDifference(bitstampArray, bitfinexArray);
+		averageDifferenceBSBT = HelperMethods.calculateHistoricAverageDifference(bitstampArray, btceArray);
+		System.out.println("The historic difference is: " + averageDifferenceBSOK);
+		
+		System.out.println("Building LinkedList's of Historic Data");
+		System.out.println("Loading...");
+		bitstampList = HelperMethods.buildLinkedList(bitstampArray);
+		okcoinList = HelperMethods.buildLinkedList(okcoinArray);
+		
+		bitfinexList = HelperMethods.buildLinkedList(bitfinexArray);
+		
+		btceList = HelperMethods.buildLinkedList(btceArray);
+		
 		System.out.println("Spawning Threads");
 		ArrayList<Thread> threads = new ArrayList<Thread>();
 		
@@ -135,69 +163,27 @@ public class BasicSwing extends JFrame implements ActionListener {
 			threads.get(i).start();
 		}
 		
-		mainParamsFile = "bitcoinTrader.params"; //Dayan
+		
 		
 		BasicSwing parent = new BasicSwing();
-		ReadParamsFile("bitcoinTrader.params");  //Dayan
-		
+		long startTime = System.currentTimeMillis();
 		while(!STOP){
-			System.out.println(thread1 +" "+thread2 +" "+thread3 +" "+thread4 +" ");
-
-			if(!PAUSE){
 				if (thread1 && thread2 && thread3 && thread4){
 					synchronized(monitor) {
 						monitor.notifyAll();
 					}
+					
+					long currentTime = System.currentTimeMillis();
+					double threeMonths = 7884000000.0;
+					if((currentTime-startTime) % 20000 == 0){ //threeMonths){
+						RestartGPPopUp(args, parent);
+					}
 				}
-			}
 		}
-		
-		
-		//Thread.sleep(20000);
-		//System.out.println(currentBistampPrice);
-		
-		
-		
-		//RestartGPPopUp(args, parent);//Keep this for later....
 		
 		//ec.Evolve gpProg = new ec.Evolve();
 		//gpProg.main(args);
 		
-	}
-	
-	public static void ReadParamsFile(String file) throws IOException   //Dayan
-	{
-		FileInputStream fstream = new FileInputStream(file);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-		String strLine;
-
-		while ((strLine = br.readLine()) != null)   {
-		  paramatersText.append(strLine+"\n");
-		}
-		br.close();
-	}
-	
-	public static void UpdateParamsFile(String file) throws IOException  //Dayan
-	{
-		try {
-			String[] lines = paramatersText.getText().split("\\n"); 
-			File params = new File(file);
- 
-			if (!params.exists()) {
-				params.createNewFile();
-			}
- 
-			FileWriter fw = new FileWriter(params.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			
-			for(String line : lines) {
-				bw.write(line + "\n");
-			}
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
 	}
 	
 	public BasicSwing() throws Exception
@@ -207,13 +193,65 @@ public class BasicSwing extends JFrame implements ActionListener {
 		setResizable(false);
 		p.setLayout(null);
 		
-		BuildInterface.buildUserInterface(marketSectionTitle, parametersTitle, marketsHeaderBitstamp, marketsHeaderOKCoin, marketsHeaderBitfinex, marketsHeaderBtcE, paramatersText, controlsTitle, start, pause, stop, update, lastPrice, lastBTC, lastTime, accountBalancesTitles, usdBalance, usdBtcEquivalent, btcBalance, btcUsdEquivalent, currentMarketTrading, p, mainParamsFile, accountBalancesTitles2, usdBalance2, usdBtcEquivalent2, btcBalance2, btcUsdEquivalent2, lastPrice2, status, tradeAction, accountBalancesTitles3, btcBalance3, btcUsdEquivalent3);
+		BuildInterface.buildUserInterface(marketsHeaderBitstamp, marketsHeaderOKCoin, marketsHeaderBitfinex, marketsHeaderBtcE, start, pause, stop, update, lastPrice, lastBTC, lastTime, usdBalance, usdBtcEquivalent, btcBalance, btcUsdEquivalent, currentMarketTrading, p, usdBalance2, usdBtcEquivalent2, btcBalance2, btcUsdEquivalent2, lastPrice2, status, tradeAction, btcBalance3, btcUsdEquivalent3);
 		start.addActionListener(this);
+		start.setBounds(50,230,100,40);
+		start.setEnabled(true);
+		start.setBackground(Color.GREEN);
+		start.setOpaque(true);
+		start.addActionListener(new ActionListener() {
+		     public void actionPerformed(ActionEvent ae) {
+		        start.setEnabled(false);
+		        pause.setEnabled(true);
+				pause.setBackground(Color.YELLOW);
+		        pause.setText("PAUSE");
+		        stop.setEnabled(true);
+				stop.setBackground(Color.RED);
+				PAUSE = false;
+		     }
+		   }
+		 );
 		p.add(start);
+		
 		pause.addActionListener(this);
+		pause.setBounds(170,230,100,40);
+		pause.setEnabled(false);
+		pause.setBackground(Color.YELLOW);
+		pause.setOpaque(true);
+		pause.addActionListener(new ActionListener() {
+		     public void actionPerformed(ActionEvent ae) {
+		        PAUSE = true;
+		    	start.setEnabled(false);
+		        pause.setEnabled(true);
+		        if (pause.getText() == "PAUSE"){
+		          pause.setText("UNPAUSE");
+		        }else {
+		          pause.setText("PAUSE");
+		        }
+		        stop.setEnabled(true);
+		     }
+		   }
+		 );
 	    p.add(pause);
+	    
 		stop.addActionListener(this);
+		stop.setBounds(290,230,100,40);
+		stop.setEnabled(false);
+		stop.setBackground(Color.RED);
+		stop.setOpaque(true);
+		stop.addActionListener(new ActionListener() {
+		     public void actionPerformed(ActionEvent ae) {
+		        start.setEnabled(true);
+		        start.setOpaque(true);
+		        pause.setEnabled(false);
+		        pause.setText("PAUSE");
+		        stop.setEnabled(false);
+		     }
+		   }
+		 );
 	    p.add(stop);
+		
+
 		update.addActionListener(this);
 	    p.add(update);
 		
@@ -273,6 +311,7 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static void RestartGPPopUp(String[] args, JFrame parent) throws InterruptedException, IOException{
         int choice = JOptionPane.showConfirmDialog(parent, "Your current GP Rule Program has been running for a while. Would you like to refresh it or continue?"); //(this, "Your current GP Rule Program has been running for a while. Would you like to refresh it or continue?", null);
         if(choice == 0){
+        	PAUSE = true;
         	Restart(args);
         }
         else{

@@ -13,7 +13,7 @@ gp.fs.0 = ec.gp.GPFunctionSet
 
 # The Function set:
 gp.fs.0.name = f0
-gp.fs.0.size = 42
+gp.fs.0.size = 43
 
 #NewTerminals
 gp.fs.0.func.0 = ec.app.bitcoinTrader.AverageOver30s
@@ -103,36 +103,33 @@ gp.fs.0.func.36 = ec.app.bitcoinTrader.func.KeijzerERC
 gp.fs.0.func.36.nc = nc0
 gp.fs.0.func.37 = ec.app.bitcoinTrader.func.Div
 gp.fs.0.func.37.nc = nc2
-#gp.fs.0.func.38 = ec.app.bitcoinTrader.func.IfThenElse
-#gp.fs.0.func.38.nc = nc3
-gp.fs.0.func.38 = ec.app.bitcoinTrader.func.Sin
-gp.fs.0.func.38.nc = nc1
-gp.fs.0.func.39 = ec.app.bitcoinTrader.func.Cos
+gp.fs.0.func.38 = ec.app.bitcoinTrader.func.IfThenElse
+gp.fs.0.func.38.nc = nc3
+gp.fs.0.func.39 = ec.app.bitcoinTrader.func.Sin
 gp.fs.0.func.39.nc = nc1
-gp.fs.0.func.40 = ec.app.bitcoinTrader.func.Exp
+gp.fs.0.func.40 = ec.app.bitcoinTrader.func.Cos
 gp.fs.0.func.40.nc = nc1
-gp.fs.0.func.41 = ec.app.bitcoinTrader.func.Log
+gp.fs.0.func.41 = ec.app.bitcoinTrader.func.Exp
 gp.fs.0.func.41.nc = nc1
+gp.fs.0.func.42 = ec.app.bitcoinTrader.func.Log
+gp.fs.0.func.42.nc = nc1
 
 #Setting up our problem:
 eval.problem = ec.app.bitcoinTrader.MultiValuedRegression
 eval.problem.data = ac.essex.ooechs.ecj.ecj2java.example.data.DoubleData
-eval.problem.size = 76930
-eval.problem.trainingSetSize = 231
-
-generations = 10
-
-select.tournament.size = 3
-
-breed.elite.0 = 3
 
 # gp.tree.print-style = latex
 
 breedthreads = auto
 evalthreads = auto
 
-
-
 # Statistics
 
 stat = ec.util.StatisticsPrinter
+eval.problem.size = 776930
+eval.problem.trainingSetSize = 22360
+generations = 20
+select.tournament.size = 3
+breed.elite.0 = 3
+pop.subpop.0.species.crossover-prob = 0.9
+pop.subpop.0.species.mutation-prob = 0.05

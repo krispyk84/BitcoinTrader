@@ -370,19 +370,7 @@ public class MultiValuedRegression extends GPProblem implements
 						bitcoinBalance = bitcoinBalanceNew;
 					}
 
-				} else {  }
-				
-				/*
-				// Fitness #2 - Expected Calculated Results
-				if(input.x < 0 && expectedResult < 0){
-					hits++;
-				} else if (input.x > 0 && expectedResult > 0){
-					hits++;
-				} else {
-					//Not a hit
-				}
-				*/
-				
+				} else {  }				
 			}
 
 			result = ((double) trainingSetSize - (double) hits) / (double) trainingSetSize;
@@ -487,32 +475,6 @@ public class MultiValuedRegression extends GPProblem implements
 					//falsePositives++;
 				}
 			} else { }
-			
-			/*
-			// Fitness #2 - Expected Calculated Results
-			if(input.x < 0 && expectedResult < 0){
-				positiveHits++;
-				trueNegatives++;
-				if(bitcoinBalanceTest > 0){
-					dollarBalanceTest = Double.parseDouble(bitStampRecords[y])*bitcoinBalanceTest;
-					bitcoinBalanceTest = 0.0;	
-				}
-			} else if (input.x > 0 && expectedResult > 0){
-				positiveHits++;
-				truePositives++;
-				if(dollarBalanceTest > 0){
-					bitcoinBalanceTest = dollarBalanceTest/Double.parseDouble(bitStampRecords[y]);
-					dollarBalanceTest = 0.0;	
-				}
-			} else {
-				if(input.x > 0 && expectedResult < 0){
-					falsePositives++;
-				}else{
-					falseNegatives++;
-				}
-			}
-			//System.out.println("Bitcoin Balance: " + bitcoinBalanceTest + " Dollar Balance: " + dollarBalanceTest);
-			*/
 		}
 		double error = ((double) testingSetSize - (double) positiveHits)
 				/ (double) testingSetSize;
@@ -543,8 +505,8 @@ public class MultiValuedRegression extends GPProblem implements
 		counter++;
 		if(counter > 10){
 			String classPackage = "ec";
-		    String className = "MathSolution2";
-		    String functionSignature = "public double calculate(double x, double AverageOver30s, double AverageOver60s, double AverageOver90s, double AverageOver120s, double RateOfChangeOver30s, double RateOfChangeOver60s, double RateOfChangeOver90s, double RateOfChangeOver120s, double RelativeStrengthIndexOver30s, double RelativeStrengthIndexOver60s, double RelativeStrengthIndexOver90s, double RelativeStrengthIndexOver120s, double MacdValue, double MaxValueOver30s, double MaxValueOver60s, double MaxValueOver90s,  double MaxValueOver120s,  double MinValueOver30s,  double MinValueOver60s,  double MinValueOver90s,  double MinValueOver120s, double VarBwBSandBF60s, double VarBwBSandBF120s, double VarBwBSandBF240s, double VarBwBSandBT60s, double VarBwBSandBT120s, double VarBwBSandBT240s, double VarBwBSandOK60s, double VarBwBSandOK120s, double VarBwBSandOK240s, double VolatilityOver30s, double VolatilityOver60s, double VolatilityOver120s, double KeijzerERC)";
+		    String className = "MathSolution";
+		    String functionSignature = "public double calculate(double x, double AverageOver30s, double AverageOver60s, double AverageOver90s, double AverageOver120s, double RateOfChangeOver30s, double RateOfChangeOver60s, double RateOfChangeOver90s, double RateOfChangeOver120s, double RelativeStrengthIndexOver30s, double RelativeStrengthIndexOver60s, double RelativeStrengthIndexOver90s, double RelativeStrengthIndexOver120s, double MacdValue, double MaxValueOver30s, double MaxValueOver60s, double MaxValueOver90s,  double MaxValueOver120s,  double MinValueOver30s,  double MinValueOver60s,  double MinValueOver90s,  double MinValueOver120s, double VarBwBSandBF60s, double VarBwBSandBF120s, double VarBwBSandBF240s, double VarBwBSandBT60s, double VarBwBSandBT120s, double VarBwBSandBT240s, double VarBwBSandOK60s, double VarBwBSandOK120s, double VarBwBSandOK240s, double VolatilityOver30s, double VolatilityOver60s, double VolatilityOver120s)";
 		    String comment = "Fitness: " + f.hits;
 		    JavaWriter writer = new JavaWriter(className, functionSignature,
 		      comment, classPackage);

@@ -52,7 +52,7 @@ public class KeijzerERC extends ParseableERC
 	
 	@Override
 	public String getJavaCode() { 
-        return "KeijzerERC"; 
+		return ""+value; 
     }
 
 	@Override
