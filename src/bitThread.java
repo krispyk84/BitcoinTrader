@@ -163,8 +163,8 @@ public class bitThread implements Runnable{
 					BasicSwing.lastPrice.setText("$"+String.format("%.2f",currentPrice));
 					BasicSwing.lastPrice2.setText("$"+String.format("%.2f",currentPrice));
 					if(lineCounter > 1){
-						BasicSwing.lastBTC.setText("Active");
-						BasicSwing.status.setText("Active");
+						BasicSwing.lastBTC.setText("ACTIVE");
+						BasicSwing.status.setText("ACTIVE");
 						//double tradeAction = fakeTradeRules[fakeTradeRuleIndex];						
 						double tradeAction = RuleCalc.calcFromGPProgram(currentPrice);
 						System.out.println("Current Price:" + currentPrice+"");

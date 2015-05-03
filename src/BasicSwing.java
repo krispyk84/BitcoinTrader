@@ -164,15 +164,9 @@ public class BasicSwing extends JFrame implements ActionListener {
 		
 		parent = new BasicSwing();
 		ARGS = args;
-		startMainLoop(ARGS);
-	}
-	
-	public static void startMainLoop(String[] args) throws Exception 
-	{
-		System.out.println("STARTING MAIN LOOP");
 		long startTime = System.currentTimeMillis();
 		int loopCounter = 0;
-		while(!STOP){
+		while(true){
 			loopCounter++;
 			if(currentMarketPrice != 0 && loopCounter%20000 == 0){
 				UIFunct.updateBalanceStatusBoard(currentMarketPrice+"");
@@ -190,7 +184,6 @@ public class BasicSwing extends JFrame implements ActionListener {
 				}
 			}
 		}
-		System.out.println("STOPPING MAIN LOOP");
 	}
 	
 	public BasicSwing() throws Exception
@@ -210,21 +203,16 @@ public class BasicSwing extends JFrame implements ActionListener {
 		start.setOpaque(true);
 		start.addActionListener(new ActionListener() {
 		     public void actionPerformed(ActionEvent ae) {
-		    	if (STOP == true) {
-		    		STOP = false;
-		    		try {
-						startMainLoop(ARGS);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-		    	}
+		    	PAUSE = false;
 		    	start.setEnabled(false);
 		        pause.setEnabled(true);
 				pause.setBackground(Color.YELLOW);
 		        pause.setText("PAUSE");
 		        stop.setEnabled(true);
+		        lastBTC.setText("ACTIVE");
+				status.setText("ACTIVE");
 				stop.setBackground(Color.RED);
-				PAUSE = false;
+				System.out.println("STARTING TRADES");
 		     }
 		   }
 		 );
@@ -237,22 +225,28 @@ public class BasicSwing extends JFrame implements ActionListener {
 		pause.setOpaque(true);
 		pause.addActionListener(new ActionListener() {
 		     public void actionPerformed(ActionEvent ae) {
-		        PAUSE = true;
 		    	start.setEnabled(false);
 		        pause.setEnabled(true);
 		        if (pause.getText() == "PAUSE"){
+		          PAUSE = true;
 		          pause.setText("UNPAUSE");
+		          lastBTC.setText("PAUSED");
+				  status.setText("PAUSED");
 		        }else {
+		          PAUSE = false;
 		          pause.setText("PAUSE");
+		          lastBTC.setText("ACTIVE");
+				  status.setText("ACTIVE");
 		        }
 		        stop.setEnabled(true);
+		        System.out.println("PAUSING TRADES...");
 		     }
 		   }
 		 );
 	    p.add(pause);
 	    
 		stop.addActionListener(this);
-		stop.setBounds(290,230,100,40);
+		stop.setBounds(290,230,130,40);
 		stop.setEnabled(false);
 		stop.setBackground(Color.RED);
 		stop.setOpaque(true);
@@ -263,7 +257,8 @@ public class BasicSwing extends JFrame implements ActionListener {
 		        pause.setEnabled(false);
 		        pause.setText("PAUSE");
 		        stop.setEnabled(false);
-		        STOP = true;
+		        PAUSE = true;
+				System.out.println("STOPPING/TRADES PAUSED");
 		        UIFunct.defaultBalances();
 		     }
 		   }

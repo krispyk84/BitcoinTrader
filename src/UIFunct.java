@@ -43,6 +43,9 @@ public class UIFunct {
 		
 		BasicSwing.numTradeInt = 0;
 		BasicSwing.numTrades.setText("0");
+		
+		BasicSwing.lastPrice.setText("Load..");
+		BasicSwing.lastPrice2.setText("Load..");
 	}
 	
 	//Sets the values on the balance/status boards
