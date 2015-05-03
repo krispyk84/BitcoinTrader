@@ -82,7 +82,7 @@ public class bitThread implements Runnable{
 			while((System.currentTimeMillis()-startTime) < 604800000)
 			{
 				Thread.sleep(updateRate * 1000);
-				String apiDataFull = HelperMethods.readUrl(URL);
+				String apiDataFull = DB.readUrl(URL);
 				
 				synchronized(BasicSwing.monitor) {
 				    while (!BasicSwing.allThreads) {
@@ -125,7 +125,6 @@ public class bitThread implements Runnable{
 				{
 					apiData[i] = apiData[i].replaceAll("[^0-9.,]+","");
 				}
-				apiData[h[0]] = HelperMethods.TimestampToDate(apiData[h[0]]);
 				currentPrice = Double.parseDouble(apiData[h[1]]);
 				if(outputFileName.equals("okcoinHistoricData.txt")){
 					BasicSwing.okCoinRecords.add(currentPrice);
@@ -144,53 +143,44 @@ public class bitThread implements Runnable{
 					BasicSwing.okcoinList.add(currentPrice);
 					BasicSwing.okcoinList.removeFirst();
 				}
-								
+				
 				lineCounter++;
 				marketHeader.setText("");
 				marketHeader.append("Last:" 	+ apiData[h[1]] + "\n");
 				marketHeader.append("Bid:" 		+ apiData[h[2]] + "\n");
 				marketHeader.append("Ask:" 		+ apiData[h[3]] + "\n");
 				marketHeader.append("24h Volume:" 	+ (h[4] >= 0 ? apiData[h[4]] : "N/A") + "\n");
-				marketHeader.append(System.currentTimeMillis()+ "\nUpdated Every " +(1+updateRate) + " sec"); //apiData[h[0]] 
+				marketHeader.append(UIFunct.getDateTime()+ "\nUpdated Every " +(1+updateRate) + " sec"); //apiData[h[0]] 
 				System.out.println(lineCounter); //for debug, to remove
 				
 				if(!BasicSwing.buyHoldCalculated && currentMarket && !BasicSwing.PAUSE){
-					HelperMethods.setBuyHold(apiData[h[1]]);
-				}
-				if(currentMarket){
-					HelperMethods.updateBalanceStatusBoard(apiData[h[1]]);
+					Trade.setBuyHold(apiData[h[1]]);
 				}
 				
 				if(currentMarket && !BasicSwing.PAUSE){
-					BasicSwing.btcUsdEquivalent3.setText("Sells For: $" + String.format("%.2f", BasicSwing.buyHoldBTCBalance*Double.parseDouble(apiData[h[1]])));
-					
 					BasicSwing.bitStampRecords.add(currentPrice);
 					BasicSwing.currentMarketPrice = Double.parseDouble(apiData[h[3]]);
-
-					
-					BasicSwing.lastPrice.setText("$"+currentPrice);
-					//Put last price for iterative here...
+					BasicSwing.lastPrice.setText("$"+String.format("%.2f",currentPrice));
+					BasicSwing.lastPrice2.setText("$"+String.format("%.2f",currentPrice));
 					if(lineCounter > 1){
-						
 						BasicSwing.lastBTC.setText("Active");
-						//put active for iterative method here
-						
-						double tradeAction = fakeTradeRules[fakeTradeRuleIndex];						
-						//double tradeAction = HelperMethods.calcFromGPProgram(currentPrice);
+						BasicSwing.status.setText("Active");
+						//double tradeAction = fakeTradeRules[fakeTradeRuleIndex];						
+						double tradeAction = RuleCalc.calcFromGPProgram(currentPrice);
 						System.out.println("Current Price:" + currentPrice+"");
 						System.out.println("TradeAction: "+ tradeAction);
-						
-						HelperMethods.makeGPTrade(tradeAction, lastTradeAction, currentPrice);
-						
-						int iterativeTradeRule = fakeIterativeTradeRules[fakeTradeRuleIndex];
-						//int iterativeTradeRule = HelperMethods.getIterativeTradingRule(BasicSwing.bitStampRecords, BasicSwing.okCoinRecords, BasicSwing.averageDifferenceBSOK);
+						Trade.makeGPTrade(tradeAction, lastTradeAction, currentPrice);
+						//int iterativeTradeRule = fakeIterativeTradeRules[fakeTradeRuleIndex];
+						int iterativeTradeRule = RuleCalc.getIterativeTradingRule(BasicSwing.bitStampRecords, BasicSwing.okCoinRecords, BasicSwing.averageDifferenceBSOK);
 						System.out.println("IT TradeRule: " + iterativeTradeRule);
 						fakeTradeRuleIndex++;
-						HelperMethods.makeIterativeTrade(iterativeTradeRule, lastTradeAction2, currentPrice);
-						
+						Trade.makeIterativeTrade(iterativeTradeRule, lastTradeAction2, currentPrice);
+						DB.writeBalancesToFile(BasicSwing.currentUSDBalance, BasicSwing.oldUSDBalance, BasicSwing.currentBTCBalance, BasicSwing.oldBTCBalance, BasicSwing.currentUSDBalance2, BasicSwing.oldUSDBalance2, BasicSwing.currentBTCBalance2, BasicSwing.oldBTCBalance2);
+					}
+					if(lineCounter%240 == 0){
+						DB.BuildGPDatabase();
 					}
 				}
-				//System.out.println("END OF THREAD");
 			}	
 			
 			bw.close();

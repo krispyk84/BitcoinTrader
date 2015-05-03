@@ -10,7 +10,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -20,10 +19,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 
 
 public class BuildInterface {
@@ -34,7 +31,9 @@ public class BuildInterface {
 			JTextField lastPrice, JTextField lastBTC, JTextField lastTime,
 			JTextField usdBalance, JLabel usdBtcEquivalent, JTextField btcBalance, JLabel btcUsdEquivalent,
 			int currentMarketTrading, JPanel p, JTextField usdBalance2,
-			JLabel usdBtcEquivalent2, JTextField btcBalance2, JLabel btcUsdEquivalent2, JTextField lastPrice2, JTextField status, JTextField tradeAction, JTextField btcBalance3, JLabel btcUsdEquivalent3) throws IOException{
+			JLabel usdBtcEquivalent2, JTextField btcBalance2, JLabel btcUsdEquivalent2, JTextField lastPrice2, 
+			JTextField status, JTextField tradeAction, JTextField btcBalance3, JLabel btcUsdEquivalent3, 
+			JTextField numTrades, JTextField numTrades2) throws IOException{
 		JPanel marketSnapshot = new JPanel(new FlowLayout()); // new FlowLayout not needed
 		marketSnapshot.setOpaque(false);
 		 
@@ -57,7 +56,6 @@ public class BuildInterface {
 		developed.setSize(400,20);
 		developed.setFont(fontItalic);
 		p.add(developed);
-		
 		
 		JLabel marketSectionTitle = new JLabel("Market Snapshot");
 		p.add(marketSectionTitle);
@@ -222,12 +220,6 @@ public class BuildInterface {
 		txtMuteProb.setHorizontalAlignment(JTextField.CENTER);
 		txtMuteProb.setText(paramVals[6]);
 		
-		/*
-		JScrollPane scroll = new JScrollPane(paramatersText);
-	    scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-	    scroll.setBounds(50,340, 360,330);
-		p.add(scroll);  
-	    */
 		//update.addActionListener(this);
 		update.setActionCommand("Update");
 		update.setBounds(270,620, 100, 40);
@@ -235,7 +227,7 @@ public class BuildInterface {
 		     public void actionPerformed(ActionEvent ae) {
 		        try {
 					UpdateParamsFile(txtPopSize, txtTrainSize, txtGenerations, txtTournSize, txtNumElite, txtCrossProb, txtMuteProb);          //Dayan
-					JOptionPane.showMessageDialog(p, "Parameters have been successfuly updated!");
+					JOptionPane.showMessageDialog(p, "Parameters have been successfuly updated!", "GP Param Update", JOptionPane.INFORMATION_MESSAGE, new ImageIcon("popupicon.png"));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -244,41 +236,69 @@ public class BuildInterface {
 		 );
 	    //p.add(update);
 	    
-		JLabel lastUpdateTitle = new JLabel("Genetic Programming Trader Status");
-		JLabel price = new JLabel("$ Price");
-		JLabel BTC = new JLabel("BTC");
-		JLabel time = new JLabel("Time");
 		
+		
+		
+		JLabel lastUpdateTitle = new JLabel("Genetic Programming Trader Status");
 		lastUpdateTitle.setSize(320,20);
 		lastUpdateTitle.setLocation(500,190);
 		lastUpdateTitle.setFont(myFontTitle);
 		p.add(lastUpdateTitle);
 				
-		lastPrice.setSize(150,30);
-		lastPrice.setLocation(500,320);
+		JLabel lblLastPrice = new JLabel("Price");
+		p.add(lblLastPrice);
+		lblLastPrice.setSize(90,20);
+		lblLastPrice.setLocation(530, 310);
+		lastPrice.setSize(90,30);
+		lastPrice.setLocation(500,330);
 		lastPrice.setFont(myFont);
 		lastPrice.setEnabled(false);
 		lastPrice.setDisabledTextColor(Color.BLACK);
 		lastPrice.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lastPrice.setHorizontalAlignment(JTextField.CENTER);
 		p.add(lastPrice);
 		
-		lastBTC.setSize(150,30);
-		lastBTC.setLocation(660,320);
+		JLabel lblTraderStatus = new JLabel("Status");
+		p.add(lblTraderStatus);
+		lblTraderStatus.setSize(90,20);
+		lblTraderStatus.setLocation(630,310);
+		lastBTC.setSize(90,30);
+		lastBTC.setLocation(600,330);
 		lastBTC.setFont(myFont);
 		lastBTC.setText("On Hold");
 		lastBTC.setEnabled(false);
 		lastBTC.setDisabledTextColor(Color.BLACK);
 		lastBTC.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lastBTC.setHorizontalAlignment(JTextField.CENTER);
 		p.add(lastBTC);
 		
-		lastTime.setSize(150,30);
-		lastTime.setLocation(820,320);
+		JLabel lblTradeRule = new JLabel("Trade Rule");
+		p.add(lblTradeRule);
+		lblTradeRule.setSize(90,20);
+		lblTradeRule.setLocation(710,310);
+		lastTime.setSize(90,30);
+		lastTime.setLocation(700,330);
 		lastTime.setFont(myFont);
 		lastTime.setText("HOLD");
 		lastTime.setEnabled(false);
 		lastTime.setDisabledTextColor(Color.BLACK);
 		lastTime.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lastTime.setHorizontalAlignment(JTextField.CENTER);
 		p.add(lastTime);
+		
+		JLabel lblNumTrades = new JLabel("# of Trades");
+		p.add(lblNumTrades);
+		lblNumTrades.setSize(90,20);
+		lblNumTrades.setLocation(810,310);
+		numTrades.setSize(90,30);
+		numTrades.setLocation(800,330);
+		numTrades.setFont(myFont);;
+		numTrades.setText("0");
+		numTrades.setEnabled(false);
+		numTrades.setDisabledTextColor(Color.BLACK);
+		numTrades.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		numTrades.setHorizontalAlignment(JTextField.CENTER);
+		p.add(numTrades);
 		
 		JLabel iterativeAlgTitle = new JLabel("Iterative Algorithm Trader Status");
 		
@@ -321,31 +341,60 @@ public class BuildInterface {
 		btcUsdEquivalent2.setSize(180,20);
 		btcUsdEquivalent2.setFont(myFont);
 		
-		lastPrice2.setSize(150,30);
-		lastPrice2.setLocation(500,520);
+		JLabel lblLastPrice2 = new JLabel("Price");
+		p.add(lblLastPrice2);
+		lblLastPrice2.setSize(90,20);
+		lblLastPrice2.setLocation(530,510);
+		lastPrice2.setSize(90,30);
+		lastPrice2.setLocation(500,530);
 		lastPrice2.setFont(myFont);
 		lastPrice2.setEnabled(false);
 		lastPrice2.setDisabledTextColor(Color.BLACK);
 		lastPrice2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		lastPrice2.setHorizontalAlignment(JTextField.CENTER);
 		p.add(lastPrice2);
 		
-		status.setSize(150,30);
-		status.setLocation(660,520);
+		JLabel lblStatus = new JLabel("Status");
+		p.add(lblStatus);
+		lblStatus.setSize(90,20);
+		lblStatus.setLocation(630,510);
+		status.setSize(90,30);
+		status.setLocation(600,530);
 		status.setFont(myFont);
 		status.setText("On Hold");
 		status.setEnabled(false);
 		status.setDisabledTextColor(Color.BLACK);
 		status.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		status.setHorizontalAlignment(JTextField.CENTER);
 		p.add(status);
 		
-		tradeAction.setSize(150,30);
-		tradeAction.setLocation(820,520);
+		JLabel lblTradeAction2 = new JLabel("Trade");
+		p.add(lblTradeAction2);
+		lblTradeAction2.setSize(90,20);
+		lblTradeAction2.setLocation(730,510);
+		tradeAction.setSize(90,30);
+		tradeAction.setLocation(700,530);
 		tradeAction.setFont(myFont);
 		tradeAction.setText("HOLD");
 		tradeAction.setEnabled(false);
 		tradeAction.setDisabledTextColor(Color.BLACK);
 		tradeAction.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		tradeAction.setHorizontalAlignment(JTextField.CENTER);
 		p.add(tradeAction);
+		
+		JLabel lblNumTrades2 = new JLabel("# of Trades");
+		p.add(lblNumTrades2);
+		lblNumTrades2.setSize(90,20);
+		lblNumTrades2.setLocation(810,510);
+		numTrades2.setSize(90,30);
+		numTrades2.setLocation(800,530);
+		numTrades2.setFont(myFont);
+		numTrades2.setText("0");
+		numTrades2.setEnabled(false);
+		numTrades2.setDisabledTextColor(Color.BLACK);
+		numTrades2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		numTrades2.setHorizontalAlignment(JTextField.CENTER);
+		p.add(numTrades2);
 		
 		JLabel buyholdTitle = new JLabel("Buy & Hold Returns");
 		
@@ -373,11 +422,6 @@ public class BuildInterface {
 		btcUsdEquivalent3.setLocation(500,680);
 		btcUsdEquivalent3.setSize(180,20);
 		btcUsdEquivalent3.setFont(myFont);
-
-		
-		
-		//add(p);
-		
 	}
 	
 	public static void UpdateParamsFile(JTextField txtPopSize, JTextField txtTrainSize, JTextField txtGenerations, JTextField txtTournSize, JTextField txtNumElite, JTextField txtCrossProb, JTextField txtMuteProb) throws IOException  //Dayan

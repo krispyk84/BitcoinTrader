@@ -41,8 +41,9 @@ public class KeijzerERC extends ParseableERC
 
     public void resetNode(final EvolutionState state, final int thread)
         { 
-        value = MEAN + state.random[thread].nextGaussian() * STANDARD_DEVIATION; 
+        value = MEAN + state.random[thread].nextGaussian() * STANDARD_DEVIATION;
         }
+    
 
 	@Override
 	public int getObjectType() {
@@ -52,7 +53,7 @@ public class KeijzerERC extends ParseableERC
 	
 	@Override
 	public String getJavaCode() { 
-		return ""+value; 
+        return ""+value; 
     }
 
 	@Override

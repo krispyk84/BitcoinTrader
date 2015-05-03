@@ -370,7 +370,7 @@ public class MultiValuedRegression extends GPProblem implements
 						bitcoinBalance = bitcoinBalanceNew;
 					}
 
-				} else {  }				
+				} else {  }
 			}
 
 			result = ((double) trainingSetSize - (double) hits) / (double) trainingSetSize;
@@ -386,14 +386,7 @@ public class MultiValuedRegression extends GPProblem implements
 			int subpopulation, int threadnum, int log) 
 	{
 		DoubleData input = (DoubleData) (this.input);		
-		// Keep track of positive, negative hits, and determines the spread of
-		// false positives to false negatives
 		int positiveHits = 0;
-		int negativeHits = 0;
-		int truePositives = 0;
-		int trueNegatives = 0;
-		int falsePositives = 0;
-		int falseNegatives = 0;
 
 		for (int y = 0; y < testingSetSize; y++) 
 		{
@@ -443,17 +436,10 @@ public class MultiValuedRegression extends GPProblem implements
 					bitcoinBalanceNew = 0.0;
 					if(dollarBalanceNew > dollarBalanceOldTest){
 						positiveHits++;
-						trueNegatives++;	
-					} else {
-						negativeHits++;
-						falsePositives++;
-					}
-					bitcoinBalanceOldTest = bitcoinBalanceTest;
+					}					bitcoinBalanceOldTest = bitcoinBalanceTest;
 					dollarBalanceTest = dollarBalanceNew;
 					bitcoinBalanceTest = bitcoinBalanceNew;
 				} else {
-					//negativeHits++;
-					//falseNegatives++;
 				}
 			} else if (input.x > 0) { //If buy
 				if (dollarBalanceTest > 0) {  //&& dollarBalanceTest/Double.parseDouble(bitStampRecords[y]) > bitcoinBalanceOldTest) {
@@ -461,45 +447,23 @@ public class MultiValuedRegression extends GPProblem implements
 					dollarBalanceNew = 0.0;
 					if(bitcoinBalanceNew > bitcoinBalanceOld){
 						positiveHits++;
-						truePositives++;	
-					} else {
-						negativeHits++;
-						falseNegatives++;
 					}
 					
 					dollarBalanceOldTest = dollarBalanceTest;
 					dollarBalanceTest = dollarBalanceNew;
 					bitcoinBalanceTest = bitcoinBalanceNew;
 				} else {
-					//negativeHits++;
-					//falsePositives++;
+
 				}
 			} else { }
 		}
 		double error = ((double) testingSetSize - (double) positiveHits)
 				/ (double) testingSetSize;
-		
 
-		/*
-		state.output.println("\n\nPerformance of Best Individual on Testing Set:\n", log);
-		state.output.println("Positive Hits: " + positiveHits
-				+ "\nNegative Hits: " + negativeHits + "\nFalse Positives: "
-				+ falsePositives + "\nFalse Negatives: " + falseNegatives
-				+ "\nTrue Positives: " + truePositives + "\nTrue Negatives: "
-				+ trueNegatives + "\n", log);
-
-		state.output.println("Dollars: " + dollarBalanceTest + " Bitcoins: " + bitcoinBalanceTest, log);
-		state.output.println("Buy and Hold Earnings: " + buyAndHoldEarnings, log);
-		state.output.println("Price per bitcoin at the end: " + bitStampRecords[bitStampRecords.length - 1],log);
-		if (bitcoinBalanceTest > 0) {
-			state.output.println("Converted Bitcoins: "+ bitcoinBalanceTest* (Double.parseDouble(bitStampRecords[bitStampRecords.length - 1])),log);
-		}
-		*/
 		// the fitness better be KozaFitness!
 		KozaFitness f = (KozaFitness) (ind.fitness.clone()); 
 		f.setStandardizedFitness(state, error);
 		f.hits = positiveHits;
-		//f.printFitnessForHumans(state, log);
 		
 		/*ECJ2Java writer*/
 		counter++;
@@ -510,7 +474,7 @@ public class MultiValuedRegression extends GPProblem implements
 		    String comment = "Fitness: " + f.hits;
 		    JavaWriter writer = new JavaWriter(className, functionSignature,
 		      comment, classPackage);
-		    File saveTo = new File("src" + java.io.File.separator + "ec");//System.getProperty("user.dir"));
+		    File saveTo = new File("src" + java.io.File.separator + "ec");
 		    
 		    try {
 		        writer.saveJavaCode((GPIndividual) ind, saveTo);

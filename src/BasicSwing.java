@@ -1,43 +1,25 @@
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
 import bitcoinUI.BuildInterface;
-import ec.app.bitcoinTrader.FinancialFunctions;
 
 public class BasicSwing extends JFrame implements ActionListener {
 	
@@ -50,7 +32,7 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static BasicSwing parent;
 	public static String[] ARGS;
 	
-	//Thread booleans for syncrhonization
+	//Thread booleans for synchronization
 	public static boolean thread1 = false;
 	public static boolean thread2 = false;
 	public static boolean thread3 = false;
@@ -71,40 +53,45 @@ public class BasicSwing extends JFrame implements ActionListener {
 	
 	public static JButton start = new JButton("START");
 	public static JButton pause = new JButton("PAUSE");
-	public static JButton stop = new JButton("STOP");
+	public static JButton stop = new JButton("STOP/RESET");
 	public static JButton update = new JButton("UPDATE");
+	public static JButton reRunGP = new JButton("RUN GP");
 	
 	public static JTextField lastPrice = new JTextField();
 	public static JTextField lastBTC = new JTextField();
 	public static JTextField lastTime = new JTextField();
+	public static JTextField numTrades = new JTextField();
+	public static int numTradeInt = 0;
 	
-	public static JTextField usdBalance = new JTextField("$1000.00 USD");
+	public static JTextField usdBalance = new JTextField("Loading...");
 	public static JLabel usdBtcEquivalent = new JLabel("Loading...");
-	public static JTextField btcBalance = new JTextField("0.00000000 BTC");
+	public static JTextField btcBalance = new JTextField("Loading...");
 	public static JLabel btcUsdEquivalent = new JLabel("Loading...");
 	
 	public static int currentMarketTrading = 0;
 	public static double currentMarketPrice = 0;
-	public static double currentUSDBalance = 1000.00;
-	public static double currentBTCBalance = 0.00000000;
+	public static double currentUSDBalance = 0;
+	public static double currentBTCBalance = 0;
 	public static double oldUSDBalance = 0.0;
 	public static double oldBTCBalance = 0.0;
 	
 	//The Balances for the Iterative Algorithm
-	public static double currentUSDBalance2 = 1000.00;
-	public static double currentBTCBalance2 = 0.00000000;
+	public static double currentUSDBalance2 = 0;
+	public static double currentBTCBalance2 = 0;
 	public static double oldUSDBalance2 = 0.0;
 	public static double oldBTCBalance2 = 0.0;
 	
 	//The UI Objects for the Iterative Algorithm
-	public static JTextField usdBalance2 = new JTextField("$1000.00 USD");
+	public static JTextField usdBalance2 = new JTextField("Loading...");
 	public static JLabel usdBtcEquivalent2 = new JLabel("Loading...");
-	public static JTextField btcBalance2 = new JTextField("0.00000000 BTC");
+	public static JTextField btcBalance2 = new JTextField("Loading...");
 	public static JLabel btcUsdEquivalent2 = new JLabel("Loading...");
 	
 	public static JTextField lastPrice2 = new JTextField();
 	public static JTextField status = new JTextField();
 	public static JTextField tradeAction = new JTextField();
+	public static JTextField numTrades2 = new JTextField();
+	public static int numTrade2Int = 0;
 	
 	//The UI Objects for the Iterative Algorithm
 	public static JTextField btcBalance3 = new JTextField("0.00000000 BTC");
@@ -118,44 +105,54 @@ public class BasicSwing extends JFrame implements ActionListener {
 	public static double averageDifferenceBSBF = 5;
 	public static double averageDifferenceBSBT = 5;
 	
+	public static String currentHomeMarketPrice = "";
+	
 	//BuyHold Variables
 	public static double buyHoldBTCBalance;
 	public static boolean buyHoldCalculated = false;
 	
 	//These Linked Lists hold the historic price data. LIFO when reaches size of 240+
-	static LinkedList<Double> bitstampList;// = new LinkedList<Double>();
-	static LinkedList<Double> bitfinexList = new LinkedList<Double>();
-	static LinkedList<Double> btceList = new LinkedList<Double>();
-	static LinkedList<Double> okcoinList = new LinkedList<Double>();
+	static LinkedList<Double> bitstampList;
+	static LinkedList<Double> bitfinexList;
+	static LinkedList<Double> btceList;
+	static LinkedList<Double> okcoinList;
 	
+	public static String[] bitstampArray;
+	public static String[] okcoinArray;
+	public static String[] bitfinexArray;
+	public static String[] btceArray;
 	
-	@SuppressWarnings("deprecation")
+	//Popup Icons
+	ImageIcon icon;
+	
 	public static void main(String[] args) throws Exception
 	{	
 		System.out.println("Calculating Historic Average Difference");
 		System.out.println("Loading...");
-		String[] bitstampArray = HelperMethods.readFromFile("bitstampEvery10Seconds.txt");
-		String[] okcoinArray = HelperMethods.readFromFile("okcoinEvery10Seconds.txt");
-		String[] bitfinexArray = HelperMethods.readFromFile("bitfinexEvery10Seconds.txt");
-		String[] btceArray = HelperMethods.readFromFile("btceEvery10Seconds.txt");
+		bitstampArray = DB.readFromFile("bitstampEvery10Seconds.txt");
+		okcoinArray = DB.readFromFile("okcoinEvery10Seconds.txt");
+		bitfinexArray = DB.readFromFile("bitfinexEvery10Seconds.txt");
+		btceArray = DB.readFromFile("btceEvery10Seconds.txt");
 		
-		averageDifferenceBSOK = HelperMethods.calculateHistoricAverageDifference(bitstampArray, okcoinArray);
-		averageDifferenceBSBF = HelperMethods.calculateHistoricAverageDifference(bitstampArray, bitfinexArray);
-		averageDifferenceBSBT = HelperMethods.calculateHistoricAverageDifference(bitstampArray, btceArray);
-		System.out.println("The historic difference is: " + averageDifferenceBSOK);
+		averageDifferenceBSOK = RuleCalc.calculateHistoricAverageDifference(bitstampArray, okcoinArray);
+		averageDifferenceBSBF = RuleCalc.calculateHistoricAverageDifference(bitstampArray, bitfinexArray);
+		averageDifferenceBSBT = RuleCalc.calculateHistoricAverageDifference(bitstampArray, btceArray);
+		
+		System.out.println("Loading Balances.");
+		DB.readBalancesFromFile();
 		
 		System.out.println("Building LinkedList's of Historic Data");
 		System.out.println("Loading...");
-		bitstampList = HelperMethods.buildLinkedList(bitstampArray);
-		okcoinList = HelperMethods.buildLinkedList(okcoinArray);
+		bitstampList = DB.buildLinkedList(bitstampArray);
+		okcoinList = DB.buildLinkedList(okcoinArray);
+		bitfinexList = DB.buildLinkedList(bitfinexArray);
+		btceList = DB.buildLinkedList(btceArray);
 		
-		bitfinexList = HelperMethods.buildLinkedList(bitfinexArray);
-		
-		btceList = HelperMethods.buildLinkedList(btceArray);
+		System.out.println("Building GP Databases");
+		DB.BuildGPDatabase();
 		
 		System.out.println("Spawning Threads");
 		ArrayList<Thread> threads = new ArrayList<Thread>();
-		
 		threads.add(new Thread(new bitThread("https://www.bitstamp.net/api/ticker/",marketsHeaderBitstamp,"bitstampHistoricData.txt",new int[]{2,1,3,7,5},true,"bitstamp")));
 		threads.add(new Thread(new bitThread("https://api.bitfinex.com/v1/ticker/btcusd",marketsHeaderBitfinex,"bitFinexHistoricalData.txt",new int[]{4,3,1,2,-1},false,"bitfinex")));
 		threads.add(new Thread(new bitThread("https://btc-e.com/api/2/btc_usd/ticker",marketsHeaderBtcE,"btcEHistoricalData.txt",new int[]{9,5,6,7,3},false,"btce")));
@@ -168,18 +165,18 @@ public class BasicSwing extends JFrame implements ActionListener {
 		parent = new BasicSwing();
 		ARGS = args;
 		startMainLoop(ARGS);
-		
-		
-		//ec.Evolve gpProg = new ec.Evolve();
-		//gpProg.main(args);
-		
 	}
 	
 	public static void startMainLoop(String[] args) throws Exception 
 	{
 		System.out.println("STARTING MAIN LOOP");
 		long startTime = System.currentTimeMillis();
+		int loopCounter = 0;
 		while(!STOP){
+			loopCounter++;
+			if(currentMarketPrice != 0 && loopCounter%20000 == 0){
+				UIFunct.updateBalanceStatusBoard(currentMarketPrice+"");
+			}
 			System.out.print("");
 			if (thread1 && thread2 && thread3 && thread4){
 				synchronized(monitor) {
@@ -188,8 +185,8 @@ public class BasicSwing extends JFrame implements ActionListener {
 				
 				long currentTime = System.currentTimeMillis();
 				double threeMonths = 7884000000.0;
-				if((currentTime-startTime) % 20000 == 0){ //threeMonths){
-					RestartGPPopUp(args, parent);
+				if((currentTime-startTime) >= threeMonths){
+					RestartGPPopUp(args, parent, new ImageIcon("popupicon.png"));
 				}
 			}
 		}
@@ -203,9 +200,9 @@ public class BasicSwing extends JFrame implements ActionListener {
 		setResizable(false);
 		p.setLayout(null);
 		
-		this.setTitle("BitCoin Trader v1.0");
+		this.setTitle("BitCoin Trader - Developed by Karim Hamasni & Dayan Balevski");
 		
-		BuildInterface.buildUserInterface(marketsHeaderBitstamp, marketsHeaderOKCoin, marketsHeaderBitfinex, marketsHeaderBtcE, start, pause, stop, update, lastPrice, lastBTC, lastTime, usdBalance, usdBtcEquivalent, btcBalance, btcUsdEquivalent, currentMarketTrading, p, usdBalance2, usdBtcEquivalent2, btcBalance2, btcUsdEquivalent2, lastPrice2, status, tradeAction, btcBalance3, btcUsdEquivalent3);
+		BuildInterface.buildUserInterface(marketsHeaderBitstamp, marketsHeaderOKCoin, marketsHeaderBitfinex, marketsHeaderBtcE, start, pause, stop, update, lastPrice, lastBTC, lastTime, usdBalance, usdBtcEquivalent, btcBalance, btcUsdEquivalent, currentMarketTrading, p, usdBalance2, usdBtcEquivalent2, btcBalance2, btcUsdEquivalent2, lastPrice2, status, tradeAction, btcBalance3, btcUsdEquivalent3, numTrades, numTrades2);
 		start.addActionListener(this);
 		start.setBounds(50,230,100,40);
 		start.setEnabled(true);
@@ -267,18 +264,34 @@ public class BasicSwing extends JFrame implements ActionListener {
 		        pause.setText("PAUSE");
 		        stop.setEnabled(false);
 		        STOP = true;
-		        HelperMethods.defaultBalances();
+		        UIFunct.defaultBalances();
 		     }
 		   }
 		 );
 	    p.add(stop);
-		
+
+	    reRunGP.addActionListener(this);
+	    reRunGP.setActionCommand("RUN GP");
+		reRunGP.setBounds(50,620, 100, 40);
+		reRunGP.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae){
+				JOptionPane.showMessageDialog(parent, "Trading will be paused as the GP Program Runs. This can take a long time!","GP Run Warning", JOptionPane.WARNING_MESSAGE);
+				try {
+					Restart(ARGS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		p.add(reRunGP);
 
 		update.addActionListener(this);
 	    p.add(update);
-		
 
-		lastPrice.setText("TEST");
+	    lastPrice.setText("Load..");
+		lastPrice2.setText("Load..");
 		
 		add(p);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -286,12 +299,10 @@ public class BasicSwing extends JFrame implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void actionPerformed(ActionEvent arg0) {	}
 	
 	public static void Restart(String[] args) throws InterruptedException, IOException{
+		STOP = true;
 		RunGP(args);
 		
 		Thread.sleep(5000);
@@ -311,6 +322,7 @@ public class BasicSwing extends JFrame implements ActionListener {
         System.exit(0);
 	}
 	
+	@SuppressWarnings("static-access")
 	public static void RunGP(String[] args){
 		ec.Evolve gpProg1 = new ec.Evolve();
 		gpProg1.main(args, "bitcoinTrader.params");
@@ -330,8 +342,9 @@ public class BasicSwing extends JFrame implements ActionListener {
         }
 	}
 	
-	public static void RestartGPPopUp(String[] args, JFrame parent) throws InterruptedException, IOException{
-        int choice = JOptionPane.showConfirmDialog(parent, "Your current GP Rule Program has been running for a while. Would you like to refresh it or continue?"); //(this, "Your current GP Rule Program has been running for a while. Would you like to refresh it or continue?", null);
+	public static void RestartGPPopUp(String[] args, JFrame parent, ImageIcon icon) throws InterruptedException, IOException{
+        
+		int choice = JOptionPane.showConfirmDialog(parent, "Your current GP Rule Program has been running for a while. Would you like to refresh it or no to continue?", "Run the GP Program?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon); //(this, "Your current GP Rule Program has been running for a while. Would you like to refresh it or continue?", null);
         if(choice == 0){
         	PAUSE = true;
         	Restart(args);
